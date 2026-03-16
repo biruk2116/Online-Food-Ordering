@@ -1,3 +1,10 @@
+import React, { useState, useContext } from 'react';
+import { Plus, Check } from 'lucide-react';
+import { CartContext } from '../context/CartContext';
+import { AuthContext } from '../context/AuthContext';
+import { FoodContext } from '../context/FoodContext';
+import RatingStars from './RatingStars';
+
 const FoodCard = ({ food }) => {
     const { addToCart } = useContext(CartContext);
     const { user } = useContext(AuthContext);

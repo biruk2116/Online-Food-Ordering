@@ -75,33 +75,33 @@ const AppContent = () => {
         </Routes>
       </main>
 
-      <footer className="bg-slate-950 pt-24 pb-12 z-10 relative overflow-hidden">
+      <footer className="bg-slate-950 py-12 z-10 relative overflow-hidden">
         {/* Footer Design Elements */}
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-500/50 to-transparent"></div>
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-brand-600/10 blur-[120px] rounded-full"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 lg:gap-8 mb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
             {/* Brand Column */}
             <div className="lg:col-span-1 flex flex-col items-center lg:items-start text-center lg:text-left">
               <Link to="/" className="flex items-center space-x-3 mb-8">
                 <div className="bg-brand-600 text-white p-2.5 rounded-2xl shadow-lg shadow-brand-500/20">
-                  <MenuIcon size={22} />
+                  <MenuIcon size={18} />
                 </div>
-                <span className="text-2xl font-black text-white tracking-tighter">
-                  EthioBites
-                </span>
-              </Link>
-              <p className="text-slate-400 text-sm leading-relaxed mb-10 max-w-xs">
-                The pinnacle of Ethiopian culinary excellence, delivered with precision and pride. Experience the tradition reimagined for the modern world.
-              </p>
-              <div className="flex items-center gap-4">
-                {[Facebook, Instagram, Twitter].map((Icon, i) => (
-                  <div key={i} className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-brand-600 hover:text-white hover:scale-110 hover:-translate-y-1 transition-all duration-300 cursor-pointer shadow-xl">
-                    <Icon size={18} />
-                  </div>
-                ))}
-              </div>
+                   <span className="text-xl font-black text-white tracking-tighter">
+                    EthioBites
+                  </span>
+                </Link>
+                <p className="text-slate-400 text-xs leading-relaxed mb-6 max-w-xs">
+                  The pinnacle of Ethiopian culinary excellence. Experience the tradition reimagined.
+                </p>
+                <div className="flex items-center gap-3">
+                  {[Facebook, Instagram, Twitter].map((Icon, i) => (
+                    <div key={i} className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-brand-600 hover:text-white hover:scale-110 transition-all duration-300 cursor-pointer shadow-xl">
+                      <Icon size={14} />
+                    </div>
+                  ))}
+                </div>
             </div>
 
             {/* Links Column 1 */}
@@ -110,7 +110,7 @@ const AppContent = () => {
               <ul className="space-y-4">
                 {['Today\'s Menu', 'Order Tracking', 'Our Story', 'Special Offers'].map((link) => (
                   <li key={link}>
-                    <a href="#" className="text-slate-500 hover:text-brand-400 text-sm font-bold transition-colors block py-1">{link}</a>
+                    <a href="#" className="text-slate-500 hover:text-brand-400 text-[13px] font-bold transition-colors block py-1">{link}</a>
                   </li>
                 ))}
               </ul>
@@ -122,7 +122,7 @@ const AppContent = () => {
               <ul className="space-y-4">
                 {['Help Center', 'Privacy Policy', 'Terms of Service', 'Carrier Program'].map((link) => (
                   <li key={link}>
-                    <a href="#" className="text-slate-500 hover:text-brand-400 text-sm font-bold transition-colors block py-1">{link}</a>
+                    <a href="#" className="text-slate-500 hover:text-brand-400 text-[13px] font-bold transition-colors block py-1">{link}</a>
                   </li>
                 ))}
               </ul>
@@ -132,29 +132,29 @@ const AppContent = () => {
             <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
               <h4 className="text-white font-black text-xs uppercase tracking-[0.2em] mb-8">Contact</h4>
               <div className="space-y-6">
-                <div className="flex items-center gap-4 group cursor-pointer">
-                   <div className="w-11 h-11 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-all duration-300">
-                      <Phone size={18} />
+                <div className="flex items-center gap-3 group cursor-pointer">
+                   <div className="w-9 h-9 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-all duration-300">
+                      <Phone size={14} />
                    </div>
                    <div>
-                      <p className="text-[10px] text-slate-500 font-black uppercase tracking-tighter">Call Us</p>
-                      <p className="text-white font-bold text-sm">+251 911 234 567</p>
+                      <p className="text-[10px] text-slate-500 font-black uppercase tracking-tighter leading-none mb-1">Call Us</p>
+                      <p className="text-white font-bold text-xs">+251 911 234 567</p>
                    </div>
                 </div>
-                <div className="flex items-center gap-4 group cursor-pointer">
-                   <div className="w-11 h-11 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
-                      <Mail size={18} />
+                <div className="flex items-center gap-3 group cursor-pointer">
+                   <div className="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
+                      <Mail size={14} />
                    </div>
                    <div>
-                      <p className="text-[10px] text-slate-500 font-black uppercase tracking-tighter">Email Us</p>
-                      <p className="text-white font-bold text-sm font-mono">hello@ethiobites.com</p>
+                      <p className="text-[10px] text-slate-500 font-black uppercase tracking-tighter leading-none mb-1">Email Us</p>
+                      <p className="text-white font-bold text-xs font-mono">hello@ethiobites.com</p>
                    </div>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
             <p className="text-slate-500 text-[11px] font-bold tracking-tight">
               &copy; {new Date().getFullYear()} EthioBites Delivery. All rights reserved.
             </p>

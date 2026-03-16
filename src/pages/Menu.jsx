@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { FoodContext } from '../context/FoodContext';
 import { SettingsContext } from '../context/SettingsContext';
 import { AuthContext } from '../context/AuthContext';
@@ -12,6 +12,32 @@ const Menu = () => {
     const { foods, searchQuery, setSearchQuery, activeCategory, setActiveCategory } = useContext(FoodContext);
     const { backgroundImage } = useContext(SettingsContext);
     const { user } = useContext(AuthContext);
+    const [showNoResults, setShowNoResults] = useState(false);
+    const noResultsRef = useRef(null);
+
+    useEffect(() => {
+        if (foods.length === 0 && searchQuery) {
+            setShowNoResults(true);
+        } else {
+            setShowNoResults(false);
+        }
+    }, [foods.length, searchQuery]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (noResultsRef.current && !noResultsRef.current.contains(event.target)) {
+                setShowNoResults(false);
+                setSearchQuery(''); // Optionally clear search to return to full menu
+            }
+        };
+
+        if (showNoResults) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showNoResults, setSearchQuery]);
 
     return (
         <div className="animate-fade-in pb-12 overflow-x-hidden">
@@ -31,7 +57,7 @@ const Menu = () => {
                 }}
             >
                 {/* Hero Banner Section */}
-                <div className="relative h-[60vh] min-h-[450px] w-full flex items-center justify-center overflow-hidden">
+                <div className="relative h-screen min-h-[600px] w-full flex items-center justify-center overflow-hidden">
                     <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
                         <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tight drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]">
                             Experience Authentic <br />
@@ -58,20 +84,36 @@ const Menu = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-32 mt-12">
-                        <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-slate-100 mb-6">
-                            <ShoppingCart size={40} className="text-slate-300" />
+                    showNoResults && (
+                        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/20 backdrop-blur-sm animate-fade-in">
+                            <div 
+                                ref={noResultsRef}
+                                className="bg-white p-8 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-sm w-full text-center transform animate-scale-in"
+                            >
+                                <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-slate-50 mb-6 text-brand-500">
+                                    <ShoppingCart size={32} />
+                                </div>
+                                <h3 className="text-2xl font-black text-slate-900 mb-2">No food matches found</h3>
+                                <p className="text-slate-500 font-medium mb-8">Try searching for something else!</p>
+                                <button 
+                                    onClick={() => {
+                                        setShowNoResults(false);
+                                        setSearchQuery('');
+                                    }}
+                                    className="w-full py-4 bg-slate-900 hover:bg-brand-600 text-white rounded-2xl font-bold transition-all shadow-lg"
+                                >
+                                    View All Menu
+                                </button>
+                            </div>
                         </div>
-                        <h3 className="text-2xl font-black text-slate-900 mb-2">No food matches found</h3>
-                        <p className="text-slate-500 font-medium">Try searching for something else!</p>
-                    </div>
+                    )
                 )}
 
                 {!searchQuery && activeCategory === 'All' && <RecommendationSection />}
 
                 {/* Advanced About Us Section */}
-                <section id="about-us" className="my-32">
-                    <div className="relative overflow-hidden bg-slate-900 rounded-[3rem] p-10 md:p-20 shadow-2xl shadow-slate-900/40">
+                <section id="about-us" className="min-h-screen flex items-center py-20">
+                    <div className="relative overflow-hidden bg-slate-900 rounded-[3rem] p-10 md:p-20 shadow-2xl shadow-slate-900/40 w-full">
                         {/* Decorative background elements */}
                         <div className="absolute top-0 right-0 w-96 h-96 bg-brand-600/20 blur-[100px] rounded-full -mr-48 -mt-48 animate-pulse"></div>
                         <div className="absolute bottom-0 left-0 w-80 h-80 bg-orange-600/10 blur-[80px] rounded-full -ml-40 -mb-40"></div>
@@ -98,9 +140,6 @@ const Menu = () => {
                                 </div>
                             </div>
 
-import { Globe, Zap, Award, Leaf } from 'lucide-react';
-
-// ... (inside Menu component)
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-4">
                                     <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-[2.5rem] transform hover:-translate-y-2 transition-all duration-500 h-64 flex flex-col justify-end group cursor-default">

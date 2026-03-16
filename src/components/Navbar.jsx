@@ -44,12 +44,6 @@ const Navbar = () => {
 
                     {/* Navigation Items */}
                     <div className="flex items-center space-x-2 sm:space-x-4">
-                        <Link
-                            to="/menu"
-                            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${isActive('/menu') ? 'bg-brand-50 text-brand-600' : 'text-slate-600 hover:bg-slate-50 hover:text-brand-500'}`}
-                        >
-                            Menu
-                        </Link>
 
                         {/* Category Dropdown */}
                         <div className="relative group hidden sm:block">
