@@ -11,6 +11,7 @@ const AdminFoodTable = ({ foods, onEdit, onDelete }) => {
                             <th className="px-6 py-4">Image</th>
                             <th className="px-6 py-4">Name</th>
                             <th className="px-6 py-4">Category</th>
+                            <th className="px-6 py-4">Calories</th>
                             <th className="px-6 py-4">Price</th>
                             <th className="px-6 py-4 text-right">Actions</th>
                         </tr>
@@ -29,6 +30,7 @@ const AdminFoodTable = ({ foods, onEdit, onDelete }) => {
                                         {food.category}
                                     </span>
                                 </td>
+                                <td className="px-6 py-4 text-slate-500 text-sm">{food.calories || 0} kcal</td>
                                 <td className="px-6 py-4 text-brand-600 font-bold">{food.price} ETB</td>
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end space-x-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">

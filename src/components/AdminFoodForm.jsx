@@ -7,7 +7,7 @@ const AdminFoodForm = ({ onSubmit, initialData = null, onCancel }) => {
         category: 'Traditional',
         description: '',
         image: '',
-        rating: '5.0'
+        calories: ''
     });
 
     useEffect(() => {
@@ -26,10 +26,10 @@ const AdminFoodForm = ({ onSubmit, initialData = null, onCancel }) => {
         onSubmit({
             ...formData,
             price: Number(formData.price),
-            rating: Number(formData.rating)
+            calories: Number(formData.calories) || 0
         });
         if (!initialData) {
-            setFormData({ name: '', price: '', category: 'Traditional', description: '', image: '', rating: '5.0' });
+            setFormData({ name: '', price: '', category: 'Traditional', description: '', image: '', calories: '' });
         }
     };
 
@@ -66,36 +66,39 @@ const AdminFoodForm = ({ onSubmit, initialData = null, onCancel }) => {
                     >
                         <option value="Traditional">Traditional</option>
                         <option value="Fast Food">Fast Food</option>
-                        <option value="Drinks">Drinks</option>
+                        <option value="Traditional Drinks">Traditional Drinks</option>
+                        <option value="Modern Drinks">Modern Drinks</option>
+                        <option value="Other Drinks">Other Drinks</option>
                         <option value="Desserts">Desserts</option>
                     </select>
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Rating</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Calories (kcal)</label>
                     <input
-                        type="number" required min="0" max="5" step="0.1" name="rating" value={formData.rating} onChange={handleChange}
+                        type="number" min="0" name="calories" value={formData.calories} onChange={handleChange}
                         className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all"
-                        placeholder="0.0 - 5.0"
+                        placeholder="e.g. 450"
                     />
                 </div>
 
                 <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-2 tracking-tight">Full Description</label>
                     <textarea
-                        required rows="3" name="description" value={formData.description} onChange={handleChange}
-                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all resize-none"
-                        placeholder="Brief description of the food item..."
+                        required rows="4" name="description" value={formData.description} onChange={handleChange}
+                        className="w-full px-5 py-3 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-none transition-all resize-none shadow-sm placeholder-slate-300 text-slate-600 font-medium"
+                        placeholder="Describe the flavors, ingredients, and soul of this dish..."
                     ></textarea>
                 </div>
 
                 <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Image URL</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Image Path</label>
                     <input
-                        type="url" required name="image" value={formData.image} onChange={handleChange}
-                        placeholder="https://example.com/image.jpg"
+                        type="text" required name="image" value={formData.image} onChange={handleChange}
+                        placeholder="/assets/images/dorowat.png"
                         className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all text-slate-600"
                     />
+                    <p className="text-xs text-slate-500 mt-2">Save your image in the <code>public/assets/images</code> folder and reference it like <code>/assets/images/filename.jpg</code></p>
                     {formData.image && (
                         <div className="mt-4 p-4 border border-slate-100 rounded-xl bg-slate-50/50">
                             <p className="text-sm text-slate-500 font-medium mb-3">Live Preview:</p>
@@ -103,9 +106,18 @@ const AdminFoodForm = ({ onSubmit, initialData = null, onCancel }) => {
                                 src={formData.image}
                                 alt="Preview"
                                 className="h-40 w-full md:w-64 rounded-lg object-cover border border-slate-200 shadow-sm"
-                                onError={(e) => e.target.style.display = 'none'}
-                                onLoad={(e) => e.target.style.display = 'block'}
+                                onError={(e) => {
+                                    e.target.style.display = 'none';
+                                    e.target.nextElementSibling.style.display = 'block';
+                                }}
+                                onLoad={(e) => {
+                                    e.target.style.display = 'block';
+                                    e.target.nextElementSibling.style.display = 'none';
+                                }}
                             />
+                            <div className="hidden text-sm text-amber-600 font-medium p-3 bg-amber-50 rounded border border-amber-200">
+                                Image not found or loading! Please check if the file exists at <code>public{formData.image}</code>
+                            </div>
                         </div>
                     )}
                 </div>
