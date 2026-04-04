@@ -87,7 +87,26 @@ const initialCategories = [
 ];
 
 function App() {
-  const [isDark, setIsDark] = useState(false);
+  // Theme System
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved === 'dark';
+  });
+
+  // Apply theme to body
+  useEffect(() => {
+    if (isDark) {
+      document.body.classList.remove('light-mode');
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.remove('dark-mode');
+      document.body.classList.add('light-mode');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDark]);
+
+  // State Management
   const [user, setUser] = useState(null);
   const [cartItems, setCartItems] = useState([]);
   const [foods, setFoods] = useState(initialFoods);
@@ -102,29 +121,13 @@ function App() {
     const savedOrders = localStorage.getItem('orders');
     const savedFoods = localStorage.getItem('foods');
     const savedCategories = localStorage.getItem('categories');
-    const savedTheme = localStorage.getItem('theme');
     
     if (savedUser) setUser(JSON.parse(savedUser));
     if (savedCart) setCartItems(JSON.parse(savedCart));
     if (savedOrders) setOrders(JSON.parse(savedOrders));
     if (savedFoods) setFoods(JSON.parse(savedFoods));
     if (savedCategories) setCategories(JSON.parse(savedCategories));
-    if (savedTheme === 'dark') {
-      setIsDark(true);
-      document.body.classList.add('dark-mode');
-    }
   }, []);
-
-  // Dark Mode Effect
-  useEffect(() => {
-    if (isDark) {
-      document.body.classList.add('dark-mode');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.body.classList.remove('dark-mode');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDark]);
 
   // Save data to localStorage
   useEffect(() => {
@@ -148,6 +151,7 @@ function App() {
     setTimeout(() => setNotification(null), 3000);
   };
 
+  // Auth Functions
   const login = (email, password) => {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     const found = users.find(u => u.email === email && u.password === password);
@@ -191,6 +195,7 @@ function App() {
     showNotification('Logged out successfully', 'info');
   };
 
+  // Cart Functions
   const addToCart = (food, quantity = 1) => {
     if (!user) {
       showNotification('Please login first to add items to cart!', 'error');
@@ -223,6 +228,7 @@ function App() {
   const getTotalPrice = () => cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const getItemCount = () => cartItems.reduce((sum, i) => sum + i.quantity, 0);
 
+  // Order Functions
   const placeOrder = (orderData) => {
     const newOrder = {
       id: Date.now(),
@@ -242,6 +248,7 @@ function App() {
     return newOrder;
   };
 
+  // Food Management Functions
   const addFood = (food) => {
     const newFood = { ...food, id: Date.now(), rating: 4.5 };
     setFoods(prev => [...prev, newFood]);
@@ -258,6 +265,7 @@ function App() {
     showNotification('Food deleted successfully!');
   };
 
+  // Category Management Functions
   const addCategory = (category) => {
     const newCategory = { ...category, id: Date.now() };
     setCategories(prev => [...prev, newCategory]);
@@ -274,6 +282,7 @@ function App() {
     showNotification('Category deleted successfully!');
   };
 
+  // Context Values
   const authValue = { user, login, signup, logout };
   const cartValue = { cartItems, addToCart, updateQuantity, removeFromCart, getTotalPrice, getItemCount };
   const foodValue = { foods, categories, addFood, updateFood, deleteFood, addCategory, updateCategory, deleteCategory };
@@ -287,7 +296,7 @@ function App() {
           <FoodContext.Provider value={foodValue}>
             <OrderContext.Provider value={orderValue}>
               <Router>
-                <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+                <div className="min-h-screen transition-colors duration-300">
                   <Navbar />
                   <Routes>
                     <Route path="/" element={<Home />} />
@@ -302,6 +311,7 @@ function App() {
                     <Route path="/account" element={<Account />} />
                   </Routes>
                   
+                  {/* Notification Toast */}
                   {notification && (
                     <div className="fixed bottom-4 right-4 z-50 animate-fadeInUp">
                       <div className={`px-6 py-3 rounded-lg shadow-lg text-white ${
@@ -322,6 +332,7 @@ function App() {
   );
 }
 
+// Custom Hooks
 export const useAuth = () => useContext(AuthContext);
 export const useCart = () => useContext(CartContext);
 export const useFood = () => useContext(FoodContext);

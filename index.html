@@ -5,98 +5,213 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoodieDash - Premium Food Delivery</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: 'Inter', sans-serif;
-      }
-      
-      /* Light Mode (Default) */
-      :root {
-        --bg-primary: #f8fafc;
-        --bg-secondary: #ffffff;
-        --bg-card: #ffffff;
-        --text-primary: #1e293b;
-        --text-secondary: #475569;
-        --border-color: #e2e8f0;
-      }
-      
-      /* Dark Mode Variables */
-      body.dark-mode {
-        --bg-primary: #0f172a;
-        --bg-secondary: #1e293b;
-        --bg-card: #1e293b;
-        --text-primary: #f1f5f9;
-        --text-secondary: #cbd5e1;
-        --border-color: #334155;
       }
       
       body {
-        background-color: var(--bg-primary);
-        color: var(--text-primary);
-        transition: all 0.3s ease;
+        font-family: 'Inter', 'Poppins', 'Outfit', sans-serif;
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
       
-      /* Hero Background Image */
-      .hero-bg {
-        background-image: url('/src/assets/images/Burger.jpg');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
+      /* LIGHT MODE - Attractive Gradients & Colors */
+      body.light-mode {
+        background: linear-gradient(135deg, #fff5f0 0%, #fff0e6 50%, #ffe8dc 100%);
+        color: #2d1b0e;
+      }
+      
+      body.light-mode .bg-white {
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(0px);
+      }
+      
+      body.light-mode .bg-gray-50 {
+        background: linear-gradient(135deg, #fffaf5 0%, #fff5ed 100%) !important;
+      }
+      
+      body.light-mode .bg-gray-100 {
+        background: linear-gradient(135deg, #fff0e8 0%, #ffe8dc 100%) !important;
+      }
+      
+      body.light-mode .card-bg {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(0px);
+      }
+      
+      body.light-mode .text-gray-800,
+      body.light-mode .text-gray-900,
+      body.light-mode .text-gray-700 {
+        color: #2d1b0e !important;
+      }
+      
+      body.light-mode .text-gray-600,
+      body.light-mode .text-gray-500 {
+        color: #6b4c3a !important;
+      }
+      
+      body.light-mode .border-gray-200,
+      body.light-mode .border-gray-300 {
+        border-color: #f0dcc8 !important;
+      }
+      
+      /* DARK MODE - Rich Dark Gradients */
+      body.dark-mode {
+        background: linear-gradient(135deg, #0f0c1f 0%, #1a1025 50%, #0d0a1a 100%);
+        color: #f0e6d8;
+      }
+      
+      body.dark-mode .bg-white,
+      body.dark-mode .bg-gray-50,
+      body.dark-mode .bg-gray-100,
+      body.dark-mode .bg-gray-800 {
+        background: rgba(30, 20, 40, 0.95) !important;
+      }
+      
+      body.dark-mode .card-bg {
+        background: linear-gradient(135deg, rgba(30, 20, 40, 0.95) 0%, rgba(25, 15, 35, 0.95) 100%) !important;
+      }
+      
+      body.dark-mode .text-gray-800,
+      body.dark-mode .text-gray-900,
+      body.dark-mode .text-gray-700 {
+        color: #f0e6d8 !important;
+      }
+      
+      body.dark-mode .text-gray-600,
+      body.dark-mode .text-gray-500 {
+        color: #b8a8a0 !important;
+      }
+      
+      body.dark-mode .border-gray-200,
+      body.dark-mode .border-gray-300 {
+        border-color: #2a1a30 !important;
+      }
+      
+      /* Card Styles */
+      .card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15);
+      }
+      
+      body.dark-mode .card:hover {
+        box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.5);
+      }
+      
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      
+      @keyframes scaleIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      
+      @keyframes underlineSlide {
+        from {
+          width: 0;
+          opacity: 0;
+        }
+        to {
+          width: 100%;
+          opacity: 1;
+        }
+      }
+      
+      .animate-fadeInUp {
+        animation: fadeInUp 0.6s ease-out;
+      }
+      
+      .animate-slideIn {
+        animation: slideIn 0.4s ease-out;
+      }
+      
+      .animate-scaleIn {
+        animation: scaleIn 0.3s ease-out;
+      }
+      
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #f0dcc8;
+      }
+      
+      body.dark-mode ::-webkit-scrollbar-track {
+        background: #2a1a30;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        border-radius: 5px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #ea580c, #dc2626);
+      }
+      
+      /* Smooth Scroll */
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* Active Link Animation */
+      .nav-active {
         position: relative;
       }
       
-      .hero-bg::before {
+      .nav-active::after {
         content: '';
         position: absolute;
-        top: 0;
+        bottom: -6px;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-      }
-      
-      body.dark-mode .hero-bg::before {
-        background: rgba(0, 0, 0, 0.7);
-      }
-      
-      /* Background Colors */
-      .bg-white { background-color: var(--bg-secondary) !important; }
-      .bg-gray-50 { background-color: var(--bg-primary) !important; }
-      .bg-gray-100 { background-color: var(--bg-secondary) !important; }
-      
-      /* Text Colors */
-      .text-gray-800, .text-gray-900, .text-gray-700 { color: var(--text-primary) !important; }
-      .text-gray-600, .text-gray-500 { color: var(--text-secondary) !important; }
-      
-      /* Border Colors */
-      .border-gray-200, .border-gray-300 { border-color: var(--border-color) !important; }
-      
-      /* Input Fields */
-      input, textarea, select {
-        background-color: var(--bg-secondary) !important;
-        border-color: var(--border-color) !important;
-        color: var(--text-primary) !important;
-      }
-      
-      input::placeholder, textarea::placeholder {
-        color: var(--text-secondary) !important;
-      }
-      
-      /* Cards */
-      .shadow-lg, .shadow-xl, .shadow-2xl {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      }
-      
-      body.dark-mode .shadow-lg,
-      body.dark-mode .shadow-xl,
-      body.dark-mode .shadow-2xl {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        animation: underlineSlide 0.3s ease-out;
       }
       
       /* Gradient Text */
@@ -114,69 +229,12 @@
       }
       
       .btn-primary:hover {
-        transform: scale(1.05);
+        transform: translateY(-2px);
         box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3);
-      }
-      
-      /* Animations */
-      @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      
-      @keyframes scaleIn {
-        from { opacity: 0; transform: scale(0.9); }
-        to { opacity: 1; transform: scale(1); }
-      }
-      
-      @keyframes slideInRight {
-        from { opacity: 0; transform: translateX(50px); }
-        to { opacity: 1; transform: translateX(0); }
-      }
-      
-      @keyframes slideInLeft {
-        from { opacity: 0; transform: translateX(-50px); }
-        to { opacity: 1; transform: translateX(0); }
-      }
-      
-      @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-      }
-      
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-      }
-      
-      .animate-fadeInUp { animation: fadeInUp 0.6s ease-out; }
-      .animate-scaleIn { animation: scaleIn 0.5s ease-out; }
-      .animate-slideInRight { animation: slideInRight 0.6s ease-out; }
-      .animate-slideInLeft { animation: slideInLeft 0.6s ease-out; }
-      .animate-bounce { animation: bounce 1s infinite; }
-      .animate-pulse { animation: pulse 2s infinite; }
-      
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar { width: 10px; }
-      ::-webkit-scrollbar-track { background: var(--border-color); }
-      ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #f97316, #ef4444);
-        border-radius: 5px;
-      }
-      
-      /* Smooth Scroll */
-      html { scroll-behavior: smooth; }
-      
-      /* Image Preview */
-      .image-preview {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        border-radius: 8px;
       }
     </style>
   </head>
-  <body>
+  <body class="light-mode">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
