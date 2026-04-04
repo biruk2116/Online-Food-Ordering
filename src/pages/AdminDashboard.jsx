@@ -14,12 +14,13 @@ const AdminDashboard = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [categoryImagePreview, setCategoryImagePreview] = useState(null);
   const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [adminCredentials, setAdminCredentials] = useState({ currentPassword: '', newEmail: '', newName: '' });
   const fileInputRef = useRef(null);
   const categoryFileInputRef = useRef(null);
   
   const [foodForm, setFoodForm] = useState({
-    name: '', price: '', category: 'Burger', shortDescription: '', description: '',
+    name: '', price: '', category: '', shortDescription: '', description: '',
     nutrition: { calories: '', carbs: '', protein: '', fats: '' }, image: ''
   });
   const [categoryForm, setCategoryForm] = useState({ name: '', image: '' });
@@ -32,10 +33,14 @@ const AdminDashboard = () => {
     }
   }, [user]);
 
-  // Security Check - Only admin can access
+  // Security Check - Only admin can access with session validation
   if (!user) return <Navigate to="/login" />;
-  if (user.email !== 'admin@foodie.com' && user.role !== 'admin') {
-    return <Navigate to="/" />;
+  
+  // Verify admin status from localStorage
+  const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user.email !== 'admin@foodie.com' && storedUser.email !== 'admin@foodie.com' && user.role !== 'admin') {
+    logout();
+    return <Navigate to="/login" />;
   }
 
   const stats = {
@@ -72,6 +77,10 @@ const AdminDashboard = () => {
 
   const handleFoodSubmit = (e) => {
     e.preventDefault();
+    if (!foodForm.category) {
+      alert('Please select a category');
+      return;
+    }
     const foodData = {
       ...foodForm,
       price: parseFloat(foodForm.price),
@@ -89,7 +98,7 @@ const AdminDashboard = () => {
     } else {
       addFood(foodData);
     }
-    setFoodForm({ name: '', price: '', category: 'Burger', shortDescription: '', description: '', nutrition: { calories: '', carbs: '', protein: '', fats: '' }, image: '' });
+    setFoodForm({ name: '', price: '', category: '', shortDescription: '', description: '', nutrition: { calories: '', carbs: '', protein: '', fats: '' }, image: '' });
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
@@ -107,6 +116,17 @@ const AdminDashboard = () => {
     if (categoryFileInputRef.current) categoryFileInputRef.current.value = '';
   };
 
+  const handleDeleteCategory = (categoryId, categoryName) => {
+    // Check if category is used by any food
+    const foodsInCategory = foods.filter(food => food.category === categoryName);
+    if (foodsInCategory.length > 0) {
+      alert(`Cannot delete "${categoryName}" because it has ${foodsInCategory.length} food items. Please reassign or delete those foods first.`);
+      return;
+    }
+    deleteCategory(categoryId);
+    setShowDeleteConfirm(null);
+  };
+
   const handleUpdateAdminProfile = () => {
     const usersList = JSON.parse(localStorage.getItem('users') || '[]');
     const adminIndex = usersList.findIndex(u => u.id === user.id);
@@ -115,7 +135,6 @@ const AdminDashboard = () => {
       usersList[adminIndex].email = adminCredentials.newEmail;
       localStorage.setItem('users', JSON.stringify(usersList));
       
-      // Update current session
       const updatedUser = { ...user, name: adminCredentials.newName, email: adminCredentials.newEmail };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       
@@ -127,8 +146,8 @@ const AdminDashboard = () => {
   };
 
   const handleUpdateOrderStatus = (orderId, currentStatus) => {
-    const newStatus = currentStatus === 'Pending' ? 'Processing' : 
-                      currentStatus === 'Processing' ? 'Delivered' : 'Pending';
+    const statusFlow = { 'Pending': 'Processing', 'Processing': 'Delivered', 'Delivered': 'Completed' };
+    const newStatus = statusFlow[currentStatus] || 'Pending';
     updateOrderStatus(orderId, newStatus);
   };
 
@@ -183,10 +202,10 @@ const AdminDashboard = () => {
           ))}
         </nav>
         <div className="p-4 border-t dark:border-gray-700">
-          <button onClick={exportData} className="w-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-2 rounded-lg hover:bg-gray-300 transition">
+          <button onClick={exportData} className="w-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-2 rounded-lg hover:bg-gray-300 transition mb-2">
             <i className="fas fa-download mr-2"></i> Export Data
           </button>
-          <button onClick={logout} className="w-full mt-2 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition">
+          <button onClick={logout} className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition">
             <i className="fas fa-sign-out-alt mr-2"></i> Logout
           </button>
         </div>
@@ -213,6 +232,28 @@ const AdminDashboard = () => {
                 </div>
               ))}
             </div>
+            
+            {/* Recent Orders */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+              <h2 className="text-xl font-bold mb-4 dark:text-white">Recent Orders</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-100 dark:bg-gray-700">
+                    <tr><th className="p-3 text-left">Order #</th><th>Customer</th><th>Total</th><th>Status</th></tr>
+                  </thead>
+                  <tbody>
+                    {getAllOrders().slice(0, 5).map(order => (
+                      <tr key={order.id} className="border-b dark:border-gray-700">
+                        <td className="p-3 dark:text-white">{order.orderNumber}</td>
+                        <td className="p-3 dark:text-white">{order.userName}</td>
+                        <td className="p-3 dark:text-white">${order.total?.toFixed(2)}</td>
+                        <td className="p-3"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : order.status === 'Processing' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>{order.status}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
 
@@ -225,9 +266,15 @@ const AdminDashboard = () => {
                 <form onSubmit={handleFoodSubmit} className="space-y-4">
                   <input type="text" placeholder="Food Name" value={foodForm.name} onChange={e => setFoodForm({...foodForm, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
                   <input type="number" step="0.01" placeholder="Price" value={foodForm.price} onChange={e => setFoodForm({...foodForm, price: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
-                  <select value={foodForm.category} onChange={e => setFoodForm({...foodForm, category: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700">
-                    <option>Burger</option><option>Ethiopian</option><option>Beverage</option>
+                  
+                  {/* Category Select - Dynamically populated from categories */}
+                  <select value={foodForm.category} onChange={e => setFoodForm({...foodForm, category: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required>
+                    <option value="">Select Category</option>
+                    {categories.filter(cat => cat.name !== 'All').map(cat => (
+                      <option key={cat.id} value={cat.name}>{cat.name}</option>
+                    ))}
                   </select>
+                  
                   <input type="text" placeholder="Short Description" value={foodForm.shortDescription} onChange={e => setFoodForm({...foodForm, shortDescription: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
                   <textarea placeholder="Full Description" rows="2" value={foodForm.description} onChange={e => setFoodForm({...foodForm, description: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
                   
@@ -245,19 +292,26 @@ const AdminDashboard = () => {
                   </div>
                   
                   <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg font-semibold hover:scale-105 transition">{editingFood ? 'Update' : 'Add'} Food</button>
-                  {editingFood && (<button type="button" onClick={() => { setEditingFood(null); setFoodForm({ name: '', price: '', category: 'Burger', shortDescription: '', description: '', nutrition: { calories: '', carbs: '', protein: '', fats: '' }, image: '' }); setImagePreview(null); }} className="w-full text-gray-500 text-sm mt-2">Cancel Edit</button>)}
+                  {editingFood && (<button type="button" onClick={() => { setEditingFood(null); setFoodForm({ name: '', price: '', category: '', shortDescription: '', description: '', nutrition: { calories: '', carbs: '', protein: '', fats: '' }, image: '' }); setImagePreview(null); }} className="w-full text-gray-500 text-sm mt-2">Cancel Edit</button>)}
                 </form>
               </div>
               <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 overflow-x-auto">
-                <h2 className="text-xl font-bold mb-4 dark:text-white">Food List</h2>
+                <h2 className="text-xl font-bold mb-4 dark:text-white">Food List ({foods.length} items)</h2>
                 <table className="w-full">
-                  <thead className="bg-gray-100 dark:bg-gray-700"><tr><th className="p-3">Image</th><th>Name</th><th>Price</th><th>Category</th><th>Actions</th></tr></thead>
+                  <thead className="bg-gray-100 dark:bg-gray-700">
+                    <tr><th className="p-3">Image</th><th>Name</th><th>Price</th><th>Category</th><th>Actions</th></tr>
+                  </thead>
                   <tbody>
                     {foods.map(food => (
                       <tr key={food.id} className="border-b dark:border-gray-700">
                         <td className="p-3"><img src={food.image} alt={food.name} className="w-12 h-12 object-cover rounded" /></td>
-                        <td className="p-3 dark:text-white">{food.name}</td><td className="p-3 dark:text-white">${food.price}</td><td className="p-3 dark:text-white">{food.category}</td>
-                        <td className="p-3 space-x-2"><button onClick={() => { setEditingFood(food); setFoodForm(food); setImagePreview(food.image); }} className="text-blue-500 hover:scale-110 transition">✏️</button><button onClick={() => deleteFood(food.id)} className="text-red-500 hover:scale-110 transition">🗑️</button></td>
+                        <td className="p-3 dark:text-white">{food.name}</td>
+                        <td className="p-3 dark:text-white">${food.price}</td>
+                        <td className="p-3"><span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">{food.category}</span></td>
+                        <td className="p-3 space-x-2">
+                          <button onClick={() => { setEditingFood(food); setFoodForm(food); setImagePreview(food.image); }} className="text-blue-500 hover:scale-110 transition">✏️</button>
+                          <button onClick={() => deleteFood(food.id)} className="text-red-500 hover:scale-110 transition">🗑️</button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -285,16 +339,26 @@ const AdminDashboard = () => {
                 </form>
               </div>
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold mb-4 dark:text-white">Categories List</h2>
+                <h2 className="text-xl font-bold mb-4 dark:text-white">Categories List ({categories.length} categories)</h2>
                 <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {categories.map(cat => (
-                    <div key={cat.id} className="flex items-center gap-4 p-3 border rounded-lg dark:border-gray-700">
-                      <img src={cat.image} alt={cat.name} className="w-12 h-12 object-contain" />
-                      <div className="flex-1 font-semibold dark:text-white">{cat.name}</div>
-                      <button onClick={() => { setEditingCategory(cat); setCategoryForm({ name: cat.name, image: cat.image }); setCategoryImagePreview(cat.image); }} className="text-blue-500 hover:scale-110 transition">✏️</button>
-                      <button onClick={() => deleteCategory(cat.id)} className="text-red-500 hover:scale-110 transition">🗑️</button>
-                    </div>
-                  ))}
+                  {categories.map(cat => {
+                    const foodCount = foods.filter(food => food.category === cat.name).length;
+                    return (
+                      <div key={cat.id} className="flex items-center gap-4 p-3 border rounded-lg dark:border-gray-700">
+                        <img src={cat.image} alt={cat.name} className="w-12 h-12 object-contain" />
+                        <div className="flex-1">
+                          <div className="font-semibold dark:text-white">{cat.name}</div>
+                          <div className="text-xs text-gray-500">{foodCount} food items</div>
+                        </div>
+                        {cat.name !== 'All' && (
+                          <div className="space-x-2">
+                            <button onClick={() => { setEditingCategory(cat); setCategoryForm({ name: cat.name, image: cat.image }); setCategoryImagePreview(cat.image); }} className="text-blue-500 hover:scale-110 transition">✏️</button>
+                            <button onClick={() => setShowDeleteConfirm(cat)} className="text-red-500 hover:scale-110 transition">🗑️</button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -306,15 +370,30 @@ const AdminDashboard = () => {
             <h1 className="text-3xl font-bold mb-8 dark:text-white">Order Management</h1>
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-x-auto p-6">
               <table className="w-full">
-                <thead className="bg-gray-100 dark:bg-gray-700"><tr><th className="p-3">Order #</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+                <thead className="bg-gray-100 dark:bg-gray-700">
+                  <tr><th className="p-3">Order #</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr>
+                </thead>
                 <tbody>
                   {getAllOrders().map(order => (
                     <tr key={order.id} className="border-b dark:border-gray-700">
-                      <td className="p-3 dark:text-white">{order.orderNumber}</td><td className="p-3 dark:text-white">{order.userName}</td><td className="p-3 dark:text-white">${order.total?.toFixed(2)}</td>
+                      <td className="p-3 dark:text-white">{order.orderNumber}</td>
+                      <td className="p-3 dark:text-white">{order.userName}</td>
+                      <td className="p-3 dark:text-white">${order.total?.toFixed(2)}</td>
                       <td className="p-3 dark:text-white">{order.paymentMethod || 'Cash'}</td>
-                      <td className="p-3"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : order.status === 'Processing' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>{order.status}</span></td>
+                      <td className="p-3">
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                          order.status === 'Processing' ? 'bg-blue-100 text-blue-800' : 
+                          order.status === 'Delivered' ? 'bg-green-100 text-green-800' : 
+                          'bg-gray-100 text-gray-800'
+                        }`}>{order.status}</span>
+                      </td>
                       <td className="p-3 dark:text-white">{new Date(order.date).toLocaleDateString()}</td>
-                      <td className="p-3"><button onClick={() => handleUpdateOrderStatus(order.id, order.status)} className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">Update</button></td>
+                      <td className="p-3">
+                        <button onClick={() => handleUpdateOrderStatus(order.id, order.status)} className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                          Update
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -328,21 +407,61 @@ const AdminDashboard = () => {
             <h1 className="text-3xl font-bold mb-8 dark:text-white">User Management</h1>
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-x-auto p-6">
               <table className="w-full">
-                <thead className="bg-gray-100 dark:bg-gray-700"><tr><th className="p-3">ID</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
+                <thead className="bg-gray-100 dark:bg-gray-700">
+                  <tr><th className="p-3">ID</th><th>Name</th><th>Email</th><th>Role</th><th>Orders</th><th>Joined</th></tr>
+                </thead>
                 <tbody>
-                  {users.map(u => (
-                    <tr key={u.id} className="border-b dark:border-gray-700">
-                      <td className="p-3 dark:text-white">#{u.id}</td><td className="p-3 dark:text-white">{u.name}</td><td className="p-3 dark:text-white">{u.email}</td>
-                      <td className="p-3"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${u.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>{u.role || 'user'}</span></td>
-                      <td className="p-3 dark:text-white">{new Date(u.createdAt).toLocaleDateString()}</td>
-                    </tr>
-                  ))}
+                  {users.map(u => {
+                    const userOrders = getAllOrders().filter(o => o.userId === u.id).length;
+                    return (
+                      <tr key={u.id} className="border-b dark:border-gray-700">
+                        <td className="p-3 dark:text-white">#{u.id}</td>
+                        <td className="p-3 dark:text-white">{u.name}</td>
+                        <td className="p-3 dark:text-white">{u.email}</td>
+                        <td className="p-3">
+                          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${u.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>
+                            {u.role || 'user'}
+                          </span>
+                        </td>
+                        <td className="p-3 dark:text-white">{userOrders} orders</td>
+                        <td className="p-3 dark:text-white">{new Date(u.createdAt).toLocaleDateString()}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
           </div>
         )}
       </main>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4 animate-scaleIn">
+            <div className="text-center mb-4">
+              <div className="text-6xl mb-3">⚠️</div>
+              <h2 className="text-2xl font-bold dark:text-white">Delete Category</h2>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                Are you sure you want to delete "{showDeleteConfirm.name}"?
+              </p>
+              {foods.filter(food => food.category === showDeleteConfirm.name).length > 0 && (
+                <p className="text-red-500 text-sm mt-2">
+                  Warning: This category has {foods.filter(food => food.category === showDeleteConfirm.name).length} food items!
+                </p>
+              )}
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setShowDeleteConfirm(null)} className="flex-1 px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg hover:bg-gray-400 transition">
+                Cancel
+              </button>
+              <button onClick={() => handleDeleteCategory(showDeleteConfirm.id, showDeleteConfirm.name)} className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Security Modal for Admin Profile Update */}
       {showSecurityModal && (

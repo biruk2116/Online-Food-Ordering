@@ -2,12 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFood } from '../App';
 import FoodCard from '../components/FoodCard';
+import CategoryFilter from '../components/CategoryFilter';
 import Footer from '../components/Footer';
 import burgerBg from '../assets/images/Burger.jpg';
 
 const Home = () => {
-  const { foods } = useFood();
+  const { foods, categories } = useFood();
   const featuredFoods = foods?.slice(0, 3) || [];
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   
@@ -15,6 +17,11 @@ const Home = () => {
   const menuRef = useRef(null);
   const aboutRef = useRef(null);
   const contactRef = useRef(null);
+
+  // Filter foods based on selected category
+  const filteredFoods = foods?.filter(food => {
+    return selectedCategory === 'All' || food.category === selectedCategory;
+  }) || [];
 
   useEffect(() => {
     if (heroRef.current) heroRef.current.id = 'hero';
@@ -46,8 +53,9 @@ const Home = () => {
         style={{
           backgroundImage: `url(${burgerBg})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
+          backgroundPosition: 'center center',
+          backgroundAttachment: 'fixed',
+          backgroundRepeat: 'no-repeat'
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-60"></div>
@@ -137,17 +145,34 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Full Menu Section */}
+      {/* Full Menu Section with Categories */}
       <section ref={menuRef} className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 gradient-text">Our Full Menu</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {foods?.map((food, idx) => (
-              <div key={food.id} className="animate-fadeInUp" style={{ animationDelay: `${idx * 0.05}s` }}>
-                <FoodCard food={food} />
-              </div>
-            ))}
-          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-6 gradient-text">Our Full Menu</h2>
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-8">Browse our delicious selection of foods</p>
+          
+          {/* Category Filter with Images */}
+          <CategoryFilter 
+            categories={categories} 
+            selectedCategory={selectedCategory} 
+            onSelectCategory={setSelectedCategory} 
+          />
+          
+          {/* Display filtered foods */}
+          {filteredFoods.length === 0 ? (
+            <div className="text-center py-12">
+              <i className="fas fa-utensils text-6xl text-gray-300 mb-4"></i>
+              <p className="text-gray-500 dark:text-gray-400">No foods found in this category</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {filteredFoods.map((food, idx) => (
+                <div key={food.id} className="animate-fadeInUp" style={{ animationDelay: `${idx * 0.05}s` }}>
+                  <FoodCard food={food} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -231,7 +256,15 @@ const Home = () => {
         <div className="container mx-auto px-4 py-16">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 gradient-text">Our Location</h2>
           <div className="rounded-2xl overflow-hidden shadow-2xl">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.442219259055!2d38.757028!3d9.030000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b85ce4d5c2a6f%3A0x5c8b7b8c5d6e8f9!2sAddis%20Ababa%2C%20Ethiopia!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s" width="100%" height="450" style={{ border: 0 }} allowFullScreen loading="lazy" title="Restaurant Location"></iframe>
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.442219259055!2d38.757028!3d9.030000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b85ce4d5c2a6f%3A0x5c8b7b8c5d6e8f9!2sAddis%20Ababa%2C%20Ethiopia!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s" 
+              width="100%" 
+              height="450" 
+              style={{ border: 0 }} 
+              allowFullScreen 
+              loading="lazy" 
+              title="Restaurant Location"
+            ></iframe>
           </div>
         </div>
       </section>
