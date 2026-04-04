@@ -25,57 +25,43 @@ const initialFoods = [
     id: 1, name: "Spicy Burger", price: 12.99, category: "Burger", rating: 4.5, 
     image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop", 
     shortDescription: "Juicy beef patty with spicy sauce", 
-    description: "Our signature spicy burger features a juicy beef patty topped with pepper jack cheese, crispy lettuce, tomatoes, onions, and our secret spicy sauce. Served with crispy fries.",
+    description: "Our signature spicy burger features a juicy beef patty topped with pepper jack cheese, crispy lettuce, tomatoes, onions, and our secret spicy sauce.",
     nutrition: { calories: 850, carbs: 65, protein: 35, fats: 42 }
   },
   { 
     id: 2, name: "Ethiopian Coffee", price: 3.99, category: "Beverage", rating: 4.8, 
     image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop",
     shortDescription: "Authentic Ethiopian coffee",
-    description: "Traditional Ethiopian coffee made from high-quality Arabica beans, roasted and brewed fresh. Served with popcorn.",
+    description: "Traditional Ethiopian coffee made from high-quality Arabica beans, roasted and brewed fresh.",
     nutrition: { calories: 5, carbs: 1, protein: 0, fats: 0 }
   },
   { 
     id: 3, name: "Doro Wat", price: 15.99, category: "Ethiopian", rating: 4.9, 
     image: "https://images.unsplash.com/photo-1585937421614-70a008356fbe?w=400&h=300&fit=crop",
     shortDescription: "Spicy chicken stew with egg",
-    description: "Ethiopia's most famous dish - tender chicken simmered in a spicy berbere sauce with onions, garlic, ginger, and a hard-boiled egg.",
+    description: "Ethiopia's most famous dish - tender chicken simmered in a spicy berbere sauce.",
     nutrition: { calories: 650, carbs: 45, protein: 42, fats: 38 }
   },
   { 
     id: 4, name: "Kitfo", price: 14.99, category: "Ethiopian", rating: 4.7, 
     image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
     shortDescription: "Minced raw beef with spices",
-    description: "Premium quality minced beef seasoned with mitmita and kibe (spiced butter). Served with ayib and gomen.",
+    description: "Premium quality minced beef seasoned with mitmita and kibe.",
     nutrition: { calories: 550, carbs: 15, protein: 48, fats: 35 }
   },
   { 
     id: 5, name: "Shiro Wat", price: 10.99, category: "Ethiopian", rating: 4.6, 
     image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
     shortDescription: "Chickpea stew",
-    description: "A comforting stew made from ground chickpeas and broad beans, simmered with onions, garlic, and berbere sauce.",
+    description: "A comforting stew made from ground chickpeas and broad beans.",
     nutrition: { calories: 380, carbs: 55, protein: 18, fats: 12 }
   },
   { 
     id: 6, name: "Tej", price: 5.99, category: "Beverage", rating: 4.4, 
     image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=300&fit=crop",
     shortDescription: "Honey wine",
-    description: "Traditional Ethiopian honey wine, slightly sweet with a hint of bitterness.",
+    description: "Traditional Ethiopian honey wine.",
     nutrition: { calories: 180, carbs: 25, protein: 0, fats: 0 }
-  },
-  { 
-    id: 7, name: "Cheese Burger", price: 11.99, category: "Burger", rating: 4.3, 
-    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
-    shortDescription: "Classic cheeseburger",
-    description: "Classic cheeseburger with melted cheddar cheese, lettuce, tomato, onion, pickles, and special sauce.",
-    nutrition: { calories: 780, carbs: 58, protein: 32, fats: 45 }
-  },
-  { 
-    id: 8, name: "Double Burger", price: 15.99, category: "Burger", rating: 4.6, 
-    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
-    shortDescription: "Double patty burger",
-    description: "Two juicy beef patties stacked with double cheese, bacon, lettuce, tomato, and our signature sauce.",
-    nutrition: { calories: 1050, carbs: 72, protein: 52, fats: 58 }
   }
 ];
 
@@ -109,7 +95,10 @@ function App() {
     if (savedOrders) setOrders(JSON.parse(savedOrders));
     if (savedFoods) setFoods(JSON.parse(savedFoods));
     if (savedCategories) setCategories(JSON.parse(savedCategories));
-    if (savedTheme === 'dark') setIsDark(true);
+    if (savedTheme === 'dark') {
+      setIsDark(true);
+      document.body.classList.add('dark-mode');
+    }
   }, []);
 
   // Save data to localStorage
@@ -164,7 +153,7 @@ function App() {
       showNotification('Email already exists', 'error');
       return false;
     }
-    const newUser = { id: Date.now(), name, email, password, role: 'user', createdAt: new Date().toISOString() };
+    const newUser = { id: Date.now(), name, email, password, role: email === 'admin@foodie.com' ? 'admin' : 'user', createdAt: new Date().toISOString() };
     users.push(newUser);
     localStorage.setItem('users', JSON.stringify(users));
     const { password: _, ...userData } = newUser;
@@ -276,7 +265,7 @@ function App() {
           <FoodContext.Provider value={foodValue}>
             <OrderContext.Provider value={orderValue}>
               <Router>
-                <div style={{ minHeight: '100vh', background: isDark ? '#0f172a' : '#f8fafc' }}>
+                <div style={{ minHeight: '100vh', backgroundColor: isDark ? '#0f172a' : '#f8fafc' }}>
                   <Navbar />
                   <Routes>
                     <Route path="/" element={<Home />} />

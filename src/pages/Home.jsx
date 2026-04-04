@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useFood, useCart, useAuth } from '../App';
 import FoodCard from '../components/FoodCard';
-
+import Footer from '../components/Footer';
 const Home = () => {
   const { foods } = useFood();
   const featuredFoods = foods?.slice(0, 3) || [];

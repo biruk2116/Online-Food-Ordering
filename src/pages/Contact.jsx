@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
+import Footer from '../components/Footer';
 
 const Contact = () => {
   const [submitted, setSubmitted] = useState(false);
-
-  const styles = {
-    container: { maxWidth: 1024, margin: '0 auto', padding: '48px 16px' },
-    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 32 },
-    card: { background: 'white', borderRadius: 24, padding: 32, boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' },
-    title: { fontSize: 36, fontWeight: 'bold', textAlign: 'center', marginBottom: 16, background: 'linear-gradient(135deg, #f97316, #ef4444)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' },
-    input: { width: '100%', padding: '12px', border: '1px solid #e5e7eb', borderRadius: 8, marginBottom: 16, fontSize: 16 },
-    button: { width: '100%', padding: '12px', background: 'linear-gradient(135deg, #f97316, #ef4444)', color: 'white', border: 'none', borderRadius: 8, fontSize: 16, fontWeight: 600, cursor: 'pointer' }
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,31 +12,66 @@ const Contact = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Contact Us</h1>
-      <p style={{ textAlign: 'center', color: '#6b7280', marginBottom: 48 }}>We'd love to hear from you!</p>
-      
-      <div style={styles.grid}>
-        <div style={styles.card}>
-          <h2 style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 24 }}>Get in Touch</h2>
-          <div style={{ marginBottom: 16 }}>📍 Bole Road, Addis Ababa, Ethiopia</div>
-          <div style={{ marginBottom: 16 }}>📞 +251 911 123 456</div>
-          <div style={{ marginBottom: 16 }}>✉️ support@foodiedash.com</div>
-          <div>⏰ 24/7 Customer Support</div>
-        </div>
+    <>
+      <div className="container mx-auto px-4 py-16 max-w-6xl mt-16">
+        <h1 className="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+          Contact Us
+        </h1>
+        <p className="text-center text-gray-600 dark:text-gray-300 mb-12">We'd love to hear from you!</p>
         
-        <div style={styles.card}>
-          <h2 style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 24 }}>Send us a Message</h2>
-          <form onSubmit={handleSubmit}>
-            <input type="text" placeholder="Your Name" style={styles.input} required />
-            <input type="email" placeholder="Email Address" style={styles.input} required />
-            <textarea placeholder="Your Message" rows="4" style={styles.input} required></textarea>
-            <button type="submit" style={styles.button}>Send Message</button>
-            {submitted && <p style={{ color: '#10b981', textAlign: 'center', marginTop: 16 }}>Message sent successfully!</p>}
-          </form>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+            <h2 className="text-2xl font-bold mb-6 dark:text-white">Get in Touch</h2>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                <div className="text-2xl">📍</div>
+                <div>
+                  <div className="font-semibold dark:text-white">Address</div>
+                  <div className="text-gray-600 dark:text-gray-300">Bole Road, Addis Ababa, Ethiopia</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                <div className="text-2xl">📞</div>
+                <div>
+                  <div className="font-semibold dark:text-white">Phone</div>
+                  <div className="text-gray-600 dark:text-gray-300">+251 911 123 456</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                <div className="text-2xl">✉️</div>
+                <div>
+                  <div className="font-semibold dark:text-white">Email</div>
+                  <div className="text-gray-600 dark:text-gray-300">support@foodiedash.com</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                <div className="text-2xl">⏰</div>
+                <div>
+                  <div className="font-semibold dark:text-white">Hours</div>
+                  <div className="text-gray-600 dark:text-gray-300">24/7 Customer Support</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+            <h2 className="text-2xl font-bold mb-6 dark:text-white">Send us a Message</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input type="text" placeholder="Your Name" className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
+              <input type="email" placeholder="Email Address" className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
+              <textarea placeholder="Your Message" rows="5" className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required></textarea>
+              <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold hover:scale-105 transition">
+                Send Message
+              </button>
+              {submitted && (
+                <div className="text-green-500 text-center animate-fadeInUp">Message sent successfully!</div>
+              )}
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 
