@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth, useFood, useOrders } from '../App';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { foods, categories, addFood, updateFood, deleteFood, addCategory, updateCategory, deleteCategory } = useFood();
   const { getAllOrders, updateOrderStatus } = useOrders();
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -15,7 +16,8 @@ const AdminDashboard = () => {
   });
   const [categoryForm, setCategoryForm] = useState({ name: '', image: '' });
 
-  if (!user || user.email !== 'admin@foodie.com') {
+  // Redirect if not admin
+  if (!user || (user.email !== 'admin@foodie.com' && user.role !== 'admin')) {
     return <Navigate to="/" />;
   }
 
@@ -32,10 +34,10 @@ const AdminDashboard = () => {
       ...foodForm,
       price: parseFloat(foodForm.price),
       nutrition: {
-        calories: parseInt(foodForm.nutrition.calories),
-        carbs: parseInt(foodForm.nutrition.carbs),
-        protein: parseInt(foodForm.nutrition.protein),
-        fats: parseInt(foodForm.nutrition.fats)
+        calories: parseInt(foodForm.nutrition.calories) || 0,
+        carbs: parseInt(foodForm.nutrition.carbs) || 0,
+        protein: parseInt(foodForm.nutrition.protein) || 0,
+        fats: parseInt(foodForm.nutrition.fats) || 0
       },
       rating: 4.5
     };
@@ -65,7 +67,7 @@ const AdminDashboard = () => {
       <aside className="w-64 bg-white dark:bg-gray-800 shadow-xl">
         <div className="p-6 border-b dark:border-gray-700">
           <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">Admin Panel</h2>
-          <p className="text-sm text-gray-500 mt-1">Welcome, {user.name}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Welcome, {user.name}</p>
         </div>
         <nav className="p-4 space-y-2">
           {[
@@ -94,7 +96,7 @@ const AdminDashboard = () => {
       <main className="flex-1 p-8 overflow-y-auto">
         {activeTab === 'dashboard' && (
           <div className="animate-fadeInUp">
-            <h1 className="text-3xl font-bold mb-8">Dashboard Overview</h1>
+            <h1 className="text-3xl font-bold mb-8 dark:text-white">Dashboard Overview</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {[
                 { title: 'Total Foods', value: stats.totalFoods, icon: '🍔', color: 'from-orange-500 to-red-500' },
@@ -118,27 +120,27 @@ const AdminDashboard = () => {
 
         {activeTab === 'foods' && (
           <div className="animate-fadeInUp">
-            <h1 className="text-3xl font-bold mb-8">Food Management</h1>
+            <h1 className="text-3xl font-bold mb-8 dark:text-white">Food Management</h1>
             <div className="grid lg:grid-cols-3 gap-8">
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                <h2 className="text-xl font-bold mb-4">{editingFood ? 'Edit Food' : 'Add New Food'}</h2>
+                <h2 className="text-xl font-bold mb-4 dark:text-white">{editingFood ? 'Edit Food' : 'Add New Food'}</h2>
                 <form onSubmit={handleFoodSubmit} className="space-y-4">
-                  <input type="text" placeholder="Food Name" value={foodForm.name} onChange={e => setFoodForm({...foodForm, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
-                  <input type="number" step="0.01" placeholder="Price" value={foodForm.price} onChange={e => setFoodForm({...foodForm, price: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
-                  <select value={foodForm.category} onChange={e => setFoodForm({...foodForm, category: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700">
+                  <input type="text" placeholder="Food Name" value={foodForm.name} onChange={e => setFoodForm({...foodForm, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
+                  <input type="number" step="0.01" placeholder="Price" value={foodForm.price} onChange={e => setFoodForm({...foodForm, price: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
+                  <select value={foodForm.category} onChange={e => setFoodForm({...foodForm, category: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     <option>Burger</option><option>Ethiopian</option><option>Beverage</option>
                   </select>
-                  <input type="text" placeholder="Short Description" value={foodForm.shortDescription} onChange={e => setFoodForm({...foodForm, shortDescription: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
-                  <textarea placeholder="Full Description" rows="2" value={foodForm.description} onChange={e => setFoodForm({...foodForm, description: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  <input type="text" placeholder="Short Description" value={foodForm.shortDescription} onChange={e => setFoodForm({...foodForm, shortDescription: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
+                  <textarea placeholder="Full Description" rows="2" value={foodForm.description} onChange={e => setFoodForm({...foodForm, description: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
                   
                   <div className="grid grid-cols-2 gap-3">
-                    <input type="number" placeholder="Calories" value={foodForm.nutrition.calories} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, calories: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700" required />
-                    <input type="number" placeholder="Carbs (g)" value={foodForm.nutrition.carbs} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, carbs: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700" required />
-                    <input type="number" placeholder="Protein (g)" value={foodForm.nutrition.protein} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, protein: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700" required />
-                    <input type="number" placeholder="Fats (g)" value={foodForm.nutrition.fats} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, fats: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                    <input type="number" placeholder="Calories" value={foodForm.nutrition.calories} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, calories: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                    <input type="number" placeholder="Carbs (g)" value={foodForm.nutrition.carbs} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, carbs: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                    <input type="number" placeholder="Protein (g)" value={foodForm.nutrition.protein} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, protein: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                    <input type="number" placeholder="Fats (g)" value={foodForm.nutrition.fats} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, fats: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                   </div>
                   
-                  <input type="text" placeholder="Image URL" value={foodForm.image} onChange={e => setFoodForm({...foodForm, image: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  <input type="text" placeholder="Image URL" value={foodForm.image} onChange={e => setFoodForm({...foodForm, image: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
                   
                   <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg font-semibold hover:scale-105 transition">
                     {editingFood ? 'Update' : 'Add'} Food
@@ -152,24 +154,24 @@ const AdminDashboard = () => {
               </div>
               
               <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold mb-4">Food List</h2>
+                <h2 className="text-xl font-bold mb-4 dark:text-white">Food List</h2>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-gray-100 dark:bg-gray-700">
-                      <tr><th className="p-3 text-left">Name</th><th>Price</th><th>Category</th><th>Calories</th><th>Actions</th></tr>
+                      <tr><th className="p-3 text-left dark:text-white">Name</th><th className="dark:text-white">Price</th><th className="dark:text-white">Category</th><th className="dark:text-white">Calories</th><th className="dark:text-white">Actions</th></tr>
                     </thead>
                     <tbody>
                       {foods.map(food => (
                         <tr key={food.id} className="border-b dark:border-gray-700">
-                          <td className="p-3">{food.name}</td>
-                          <td className="p-3">${food.price}</td>
-                          <td className="p-3">{food.category}</td>
-                          <td className="p-3">{food.nutrition.calories} cal</td>
+                          <td className="p-3 dark:text-white">{food.name}</td>
+                          <td className="p-3 dark:text-white">${food.price}</td>
+                          <td className="p-3 dark:text-white">{food.category}</td>
+                          <td className="p-3 dark:text-white">{food.nutrition?.calories || 0} cal</td>
                           <td className="p-3 space-x-2">
                             <button onClick={() => { setEditingFood(food); setFoodForm(food); }} className="text-blue-500 hover:scale-110 transition">✏️</button>
                             <button onClick={() => deleteFood(food.id)} className="text-red-500 hover:scale-110 transition">🗑️</button>
-                          </td>
-                        </tr>
+                           </td>
+                         </tr>
                       ))}
                     </tbody>
                   </table>
@@ -181,13 +183,13 @@ const AdminDashboard = () => {
 
         {activeTab === 'categories' && (
           <div className="animate-fadeInUp">
-            <h1 className="text-3xl font-bold mb-8">Category Management</h1>
+            <h1 className="text-3xl font-bold mb-8 dark:text-white">Category Management</h1>
             <div className="grid lg:grid-cols-2 gap-8">
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                <h2 className="text-xl font-bold mb-4">{editingCategory ? 'Edit Category' : 'Add New Category'}</h2>
+                <h2 className="text-xl font-bold mb-4 dark:text-white">{editingCategory ? 'Edit Category' : 'Add New Category'}</h2>
                 <form onSubmit={handleCategorySubmit} className="space-y-4">
-                  <input type="text" placeholder="Category Name" value={categoryForm.name} onChange={e => setCategoryForm({...categoryForm, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
-                  <input type="text" placeholder="Image URL" value={categoryForm.image} onChange={e => setCategoryForm({...categoryForm, image: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  <input type="text" placeholder="Category Name" value={categoryForm.name} onChange={e => setCategoryForm({...categoryForm, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
+                  <input type="text" placeholder="Image URL" value={categoryForm.image} onChange={e => setCategoryForm({...categoryForm, image: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
                   <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg font-semibold hover:scale-105 transition">
                     {editingCategory ? 'Update' : 'Add'} Category
                   </button>
@@ -200,12 +202,12 @@ const AdminDashboard = () => {
               </div>
               
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold mb-4">Categories List</h2>
+                <h2 className="text-xl font-bold mb-4 dark:text-white">Categories List</h2>
                 <div className="space-y-3 max-h-96 overflow-y-auto">
                   {categories.map(cat => (
                     <div key={cat.id} className="flex items-center gap-4 p-3 border rounded-lg dark:border-gray-700">
                       <img src={cat.image} alt={cat.name} className="w-12 h-12 object-contain" />
-                      <div className="flex-1 font-semibold">{cat.name}</div>
+                      <div className="flex-1 font-semibold dark:text-white">{cat.name}</div>
                       <button onClick={() => { setEditingCategory(cat); setCategoryForm({ name: cat.name, image: cat.image }); }} className="text-blue-500 hover:scale-110 transition">✏️</button>
                       <button onClick={() => deleteCategory(cat.id)} className="text-red-500 hover:scale-110 transition">🗑️</button>
                     </div>
@@ -218,34 +220,47 @@ const AdminDashboard = () => {
 
         {activeTab === 'orders' && (
           <div className="animate-fadeInUp">
-            <h1 className="text-3xl font-bold mb-8">Order Management</h1>
+            <h1 className="text-3xl font-bold mb-8 dark:text-white">Order Management</h1>
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-              <table className="w-full">
-                <thead className="bg-gray-100 dark:bg-gray-700">
-                  <tr><th className="p-3 text-left">Order #</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr>
-                </thead>
-                <tbody>
-                  {getAllOrders().map(order => (
-                    <tr key={order.id} className="border-b dark:border-gray-700">
-                      <td className="p-3">{order.orderNumber}</td>
-                      <td className="p-3">{order.userName}</td>
-                      <td className="p-3">${order.total}</td>
-                      <td className="p-3">{order.paymentMethod || 'Cash'}</td>
-                      <td className="p-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
-                        }`}>{order.status}</span>
-                      </td>
-                      <td className="p-3">{new Date(order.date).toLocaleDateString()}</td>
-                      <td className="p-3">
-                        <button onClick={() => updateOrderStatus(order.id, order.status === 'Pending' ? 'Completed' : 'Pending')} className="text-blue-500 hover:scale-110 transition">
-                          Update
-                        </button>
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-100 dark:bg-gray-700">
+                    <tr>
+                      <th className="p-3 text-left dark:text-white">Order #</th>
+                      <th className="p-3 text-left dark:text-white">Customer</th>
+                      <th className="p-3 text-left dark:text-white">Total</th>
+                      <th className="p-3 text-left dark:text-white">Payment</th>
+                      <th className="p-3 text-left dark:text-white">Status</th>
+                      <th className="p-3 text-left dark:text-white">Date</th>
+                      <th className="p-3 text-left dark:text-white">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {getAllOrders().map(order => (
+                      <tr key={order.id} className="border-b dark:border-gray-700">
+                        <td className="p-3 dark:text-white">{order.orderNumber}</td>
+                        <td className="p-3 dark:text-white">{order.userName}</td>
+                        <td className="p-3 dark:text-white">${order.total?.toFixed(2)}</td>
+                        <td className="p-3 dark:text-white">{order.paymentMethod || 'Cash'}</td>
+                        <td className="p-3">
+                          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                            order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+                          }`}>{order.status}</span>
+                        </td>
+                        <td className="p-3 dark:text-white">{new Date(order.date).toLocaleDateString()}</td>
+                        <td className="p-3">
+                          <button 
+                            onClick={() => updateOrderStatus(order.id, order.status === 'Pending' ? 'Completed' : 'Pending')} 
+                            className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                          >
+                            Update
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
