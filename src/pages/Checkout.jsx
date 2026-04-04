@@ -1,25 +1,32 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import { useOrders } from '../context/OrderContext';
+import { useCart, useOrders, useAuth } from '../App';
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { cartItems, getTotalPrice, clearCart } = useCart();
   const { placeOrder } = useOrders();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({ name: '', phone: '', address: '' });
+  const [formData, setFormData] = useState({ name: user?.name || '', phone: '', address: '' });
 
-  const handleSubmit = (e) => {
+  const styles = {
+    container: { maxWidth: 1024, margin: '0 auto', padding: '32px 16px' },
+    grid: { display: 'grid', gridTemplateColumns: '1fr 360px', gap: 32 },
+    card: { background: 'white', borderRadius: 16, padding: 24, boxShadow: '0 4px 6px rgba(0,0,0,0.1)' },
+    input: { width: '100%', padding: '12px', border: '1px solid #e5e7eb', borderRadius: 8, marginBottom: 16, fontSize: 16 },
+    button: { width: '100%', padding: '14px', background: 'linear-gradient(135deg, #f97316, #ef4444)', color: 'white', border: 'none', borderRadius: 8, fontSize: 16, fontWeight: 600, cursor: 'pointer' }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      placeOrder({ ...formData, items: cartItems, total: getTotalPrice(), paymentMethod: 'cash' });
-      clearCart();
-      alert('Order placed successfully!');
-      navigate('/orders');
-      setLoading(false);
-    }, 1000);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    placeOrder({ ...formData, items: cartItems, total: getTotalPrice(), paymentMethod: 'cash' });
+    clearCart();
+    alert('Order placed successfully!');
+    navigate('/orders');
+    setLoading(false);
   };
 
   if (cartItems.length === 0) {
@@ -28,28 +35,42 @@ const Checkout = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
-      <div className="grid md:grid-cols-2 gap-8">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input type="text" placeholder="Full Name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg" required />
-          <input type="tel" placeholder="Phone Number" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full px-4 py-2 border rounded-lg" required />
-          <textarea placeholder="Delivery Address" rows="3" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="w-full px-4 py-2 border rounded-lg" required />
-          <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold">
-            {loading ? 'Placing Order...' : `Place Order • $${getTotalPrice().toFixed(2)}`}
-          </button>
-        </form>
-        <div className="bg-white p-6 rounded-xl shadow">
-          <h3 className="text-xl font-bold mb-4">Order Summary</h3>
+    <div style={styles.container}>
+      <h1 style={{ fontSize: 32, fontWeight: 'bold', marginBottom: 32 }}>Checkout</h1>
+      <div style={styles.grid}>
+        <div>
+          <div style={styles.card}>
+            <h2 style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>Delivery Information</h2>
+            <form onSubmit={handleSubmit}>
+              <input type="text" placeholder="Full Name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={styles.input} required />
+              <input type="tel" placeholder="Phone Number" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} style={styles.input} required />
+              <textarea placeholder="Delivery Address" rows="3" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} style={styles.input} required></textarea>
+              <button type="submit" disabled={loading} style={styles.button}>
+                {loading ? 'Processing...' : `Place Order • $${(getTotalPrice() + 2.99).toFixed(2)}`}
+              </button>
+            </form>
+          </div>
+        </div>
+        
+        <div style={styles.card}>
+          <h2 style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>Order Summary</h2>
           {cartItems.map(item => (
-            <div key={item.id} className="flex justify-between py-2 border-b">
+            <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
               <span>{item.name} x{item.quantity}</span>
               <span>${(item.price * item.quantity).toFixed(2)}</span>
             </div>
           ))}
-          <div className="flex justify-between pt-4 text-xl font-bold">
-            <span>Total</span>
-            <span className="text-orange-500">${getTotalPrice().toFixed(2)}</span>
+          <div style={{ borderTop: '1px solid #e5e7eb', marginTop: 16, paddingTop: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span>Subtotal</span><span>${getTotalPrice().toFixed(2)}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span>Delivery</span><span>$2.99</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 20, fontWeight: 'bold', marginTop: 16 }}>
+              <span>Total</span>
+              <span style={{ color: '#f97316' }}>${(getTotalPrice() + 2.99).toFixed(2)}</span>
+            </div>
           </div>
         </div>
       </div>

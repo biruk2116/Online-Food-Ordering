@@ -1,65 +1,109 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import { useSettings } from '../context/SettingsContext';
+import { useCart, useAuth, useSettings } from '../App';
 
 const Navbar = () => {
   const { getItemCount } = useCart();
   const { user, logout } = useAuth();
   const { isDark, setIsDark } = useSettings();
   const navigate = useNavigate();
+  const [showMenu, setShowMenu] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  const styles = {
+    navbar: {
+      position: 'sticky',
+      top: 0,
+      zIndex: 50,
+      background: isDark ? '#1f2937' : 'white',
+      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+      padding: '12px 0'
+    },
+    container: {
+      maxWidth: 1280,
+      margin: '0 auto',
+      padding: '0 16px',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexWrap: 'wrap'
+    },
+    logo: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      background: 'linear-gradient(135deg, #f97316, #ef4444)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      textDecoration: 'none'
+    },
+    link: {
+      color: isDark ? '#f3f4f6' : '#374151',
+      textDecoration: 'none',
+      transition: 'color 0.3s'
+    },
+    cartIcon: {
+      position: 'relative',
+      cursor: 'pointer',
+      fontSize: 24
+    },
+    cartBadge: {
+      position: 'absolute',
+      top: -8,
+      right: -12,
+      background: '#f97316',
+      color: 'white',
+      borderRadius: '50%',
+      width: 20,
+      height: 20,
+      fontSize: 12,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
+  };
+
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-lg">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center flex-wrap gap-4">
-        <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-          FoodieDash
-        </Link>
+    <nav style={styles.navbar}>
+      <div style={styles.container}>
+        <Link to="/" style={styles.logo}>FoodieDash</Link>
         
-        <div className="flex items-center gap-4 flex-wrap">
-          <Link to="/" className="text-gray-700 hover:text-orange-500 transition">Home</Link>
-          <Link to="/menu" className="text-gray-700 hover:text-orange-500 transition">Menu</Link>
-          <Link to="/cart" className="relative text-gray-700 hover:text-orange-500 transition">
-            Cart
-            {getItemCount() > 0 && (
-              <span className="absolute -top-2 -right-4 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {getItemCount()}
-              </span>
-            )}
-          </Link>
-          <Link to="/orders" className="text-gray-700 hover:text-orange-500 transition">Orders</Link>
-          <Link to="/about" className="text-gray-700 hover:text-orange-500 transition">About</Link>
-          <Link to="/contact" className="text-gray-700 hover:text-orange-500 transition">Contact</Link>
-          <Link to="/feedback" className="text-gray-700 hover:text-orange-500 transition">Feedback</Link>
+        <div style={{ display: 'flex', gap: 24, alignItems: 'center', flexWrap: 'wrap' }}>
+          <Link to="/" style={styles.link}>Home</Link>
+          <Link to="/menu" style={styles.link}>Menu</Link>
+          <Link to="/about" style={styles.link}>About</Link>
+          <Link to="/contact" style={styles.link}>Contact</Link>
           
-          <button
-            onClick={() => setIsDark(!isDark)}
-            className="p-2 rounded-full bg-gray-200 hover:scale-110 transition"
-          >
+          <button onClick={() => setIsDark(!isDark)} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer' }}>
             {isDark ? '☀️' : '🌙'}
           </button>
 
           {user ? (
-            <div className="flex items-center gap-3">
-              <span className="text-gray-700">Hi, {user.name}</span>
-              {user.email === 'admin@foodie.com' && (
-                <Link to="/admin" className="text-purple-500">Admin</Link>
-              )}
-              <button onClick={handleLogout} className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-1 rounded-full text-sm">
-                Logout
+            <div style={{ position: 'relative' }}>
+              <button onClick={() => setShowMenu(!showMenu)} style={{ background: 'linear-gradient(135deg, #f97316, #ef4444)', color: 'white', padding: '8px 16px', borderRadius: 9999, border: 'none', cursor: 'pointer' }}>
+                👤 {user.name.split(' ')[0]}
               </button>
+              {showMenu && (
+                <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: 8, background: 'white', borderRadius: 8, boxShadow: '0 4px 6px rgba(0,0,0,0.1)', padding: 8, minWidth: 150, zIndex: 50 }}>
+                  <Link to="/orders" style={{ display: 'block', padding: '8px 16px', textDecoration: 'none', color: '#374151' }}>My Orders</Link>
+                  {user.email === 'admin@foodie.com' && (
+                    <Link to="/admin" style={{ display: 'block', padding: '8px 16px', textDecoration: 'none', color: '#374151' }}>Admin</Link>
+                  )}
+                  <button onClick={handleLogout} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 16px', background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}>Logout</button>
+                </div>
+              )}
             </div>
           ) : (
-            <Link to="/login" className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-1 rounded-full text-sm">
-              Login
-            </Link>
+            <Link to="/login" style={{ background: 'linear-gradient(135deg, #f97316, #ef4444)', color: 'white', padding: '8px 16px', borderRadius: 9999, textDecoration: 'none' }}>Login</Link>
           )}
+          
+          <Link to="/cart" style={styles.cartIcon}>
+            🛒
+            {getItemCount() > 0 && <span style={styles.cartBadge}>{getItemCount()}</span>}
+          </Link>
         </div>
       </div>
     </nav>

@@ -1,82 +1,46 @@
 import React, { useState } from 'react';
 
 const Contact = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+
+  const styles = {
+    container: { maxWidth: 1024, margin: '0 auto', padding: '48px 16px' },
+    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 32 },
+    card: { background: 'white', borderRadius: 24, padding: 32, boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' },
+    title: { fontSize: 36, fontWeight: 'bold', textAlign: 'center', marginBottom: 16, background: 'linear-gradient(135deg, #f97316, #ef4444)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' },
+    input: { width: '100%', padding: '12px', border: '1px solid #e5e7eb', borderRadius: 8, marginBottom: 16, fontSize: 16 },
+    button: { width: '100%', padding: '12px', background: 'linear-gradient(135deg, #f97316, #ef4444)', color: 'white', border: 'none', borderRadius: 8, fontSize: 16, fontWeight: 600, cursor: 'pointer' }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
-    contacts.push({ ...formData, date: new Date().toISOString() });
-    localStorage.setItem('contacts', JSON.stringify(contacts));
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 3000);
-    setFormData({ name: '', email: '', message: '' });
+    e.target.reset();
   };
 
   return (
-    <div className="container mx-auto px-4 py-16 max-w-6xl">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-          Contact Us
-        </h1>
-        <p className="text-gray-600 mt-2">We'd love to hear from you!</p>
-      </div>
+    <div style={styles.container}>
+      <h1 style={styles.title}>Contact Us</h1>
+      <p style={{ textAlign: 'center', color: '#6b7280', marginBottom: 48 }}>We'd love to hear from you!</p>
       
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-2xl font-bold mb-6">Get in Touch</h2>
-          <div className="space-y-4">
-            {[
-              { icon: '📍', label: 'Address', value: 'Bole Road, Addis Ababa, Ethiopia' },
-              { icon: '📞', label: 'Phone', value: '+251 911 123 456' },
-              { icon: '✉️', label: 'Email', value: 'support@foodiedash.com' },
-              { icon: '⏰', label: 'Hours', value: '24/7 Customer Support' }
-            ].map(info => (
-              <div key={info.label} className="flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50 transition">
-                <div className="text-2xl">{info.icon}</div>
-                <div>
-                  <div className="font-semibold">{info.label}</div>
-                  <div className="text-gray-600">{info.value}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+      <div style={styles.grid}>
+        <div style={styles.card}>
+          <h2 style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 24 }}>Get in Touch</h2>
+          <div style={{ marginBottom: 16 }}>📍 Bole Road, Addis Ababa, Ethiopia</div>
+          <div style={{ marginBottom: 16 }}>📞 +251 911 123 456</div>
+          <div style={{ marginBottom: 16 }}>✉️ support@foodiedash.com</div>
+          <div>⏰ 24/7 Customer Support</div>
         </div>
         
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-2xl font-bold mb-6">Send us a Message</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input 
-              type="text" 
-              placeholder="Your Name" 
-              value={formData.name} 
-              onChange={e => setFormData({...formData, name: e.target.value})} 
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
-              required 
-            />
-            <input 
-              type="email" 
-              placeholder="Email Address" 
-              value={formData.email} 
-              onChange={e => setFormData({...formData, email: e.target.value})} 
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
-              required 
-            />
-            <textarea 
-              placeholder="Your Message" 
-              rows="5" 
-              value={formData.message} 
-              onChange={e => setFormData({...formData, message: e.target.value})} 
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
-              required 
-            />
-            <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold hover:scale-105 transition">
-              Send Message
-            </button>
-            {submitted && (
-              <div className="text-green-500 text-center animate-fadeIn">Message sent successfully!</div>
-            )}
+        <div style={styles.card}>
+          <h2 style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 24 }}>Send us a Message</h2>
+          <form onSubmit={handleSubmit}>
+            <input type="text" placeholder="Your Name" style={styles.input} required />
+            <input type="email" placeholder="Email Address" style={styles.input} required />
+            <textarea placeholder="Your Message" rows="4" style={styles.input} required></textarea>
+            <button type="submit" style={styles.button}>Send Message</button>
+            {submitted && <p style={{ color: '#10b981', textAlign: 'center', marginTop: 16 }}>Message sent successfully!</p>}
           </form>
         </div>
       </div>

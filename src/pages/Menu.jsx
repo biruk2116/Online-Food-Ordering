@@ -1,52 +1,114 @@
 import React, { useState } from 'react';
-import { useFood } from '../context/FoodContext';
-import FoodCard from '../components/FoodCard';
-import SearchBar from '../components/SearchBar';
+import { Link } from 'react-router-dom';
+import { useFood, useCart, useAuth } from '../App';
 
 const Menu = () => {
-  const { foods, categories, loading } = useFood();
+  const { foods, categories } = useFood();
+  const { addToCart } = useCart();
+  const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [addingId, setAddingId] = useState(null);
 
-  const filteredFoods = foods?.filter(food => {
-    const matchesCategory = selectedCategory === 'All' || food.category === selectedCategory;
-    const matchesSearch = food.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (food.shortDescription && food.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()));
-    return matchesCategory && matchesSearch;
-  }) || [];
+  const filteredFoods = foods.filter(food => {
+    const matchCategory = selectedCategory === 'All' || food.category === selectedCategory;
+    const matchSearch = food.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchCategory && matchSearch;
+  });
 
-  if (loading) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>;
-  }
+  const handleAddToCart = async (food) => {
+    if (!user) {
+      alert('Please login first!');
+      return;
+    }
+    setAddingId(food.id);
+    await addToCart(food);
+    setTimeout(() => setAddingId(null), 500);
+  };
+
+  const styles = {
+    container: { maxWidth: 1280, margin: '0 auto', padding: '32px 16px' },
+    searchInput: { width: '100%', padding: '12px 16px', border: '1px solid #e5e7eb', borderRadius: 12, marginBottom: 24, fontSize: 16 },
+    categoryBtn: (active) => ({
+      padding: '8px 20px',
+      borderRadius: 9999,
+      border: 'none',
+      cursor: 'pointer',
+      fontWeight: 600,
+      transition: 'all 0.3s',
+      background: active ? 'linear-gradient(135deg, #f97316, #ef4444)' : '#e5e7eb',
+      color: active ? 'white' : '#374151'
+    }),
+    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24, marginTop: 32 },
+    card: { background: 'white', borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', transition: 'transform 0.3s' },
+    cardHover: { transform: 'translateY(-4px)' },
+    image: { width: '100%', height: 200, objectFit: 'cover' },
+    cardContent: { padding: 16 },
+    price: { color: '#f97316', fontWeight: 'bold', fontSize: 18, marginTop: 8 },
+    addBtn: (adding) => ({
+      width: '100%',
+      marginTop: 12,
+      padding: '10px',
+      borderRadius: 9999,
+      border: 'none',
+      fontWeight: 600,
+      cursor: 'pointer',
+      background: adding ? '#9ca3af' : 'linear-gradient(135deg, #f97316, #ef4444)',
+      color: 'white',
+      transition: 'transform 0.3s'
+    })
+  };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+    <div style={styles.container}>
+      <input
+        type="text"
+        placeholder="Search for delicious food..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        style={styles.searchInput}
+      />
       
-      {/* Categories */}
-      <div className="flex gap-3 overflow-x-auto pb-4 mb-8">
-        {categories?.map(cat => (
+      <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8 }}>
+        {categories.map(cat => (
           <button
             key={cat.id}
             onClick={() => setSelectedCategory(cat.name)}
-            className={`flex-shrink-0 px-5 py-2 rounded-full font-semibold transition ${
-              selectedCategory === cat.name
-                ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
+            style={styles.categoryBtn(selectedCategory === cat.name)}
           >
             {cat.name}
           </button>
         ))}
       </div>
       
-      {filteredFoods.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">No foods found.</div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredFoods.map(food => <FoodCard key={food.id} food={food} />)}
-        </div>
-      )}
+      <div style={styles.grid}>
+        {filteredFoods.map(food => (
+          <div key={food.id} style={styles.card}>
+            <Link to={`/food/${food.id}`}>
+              <img src={food.image} alt={food.name} style={styles.image} />
+            </Link>
+            <div style={styles.cardContent}>
+              <Link to={`/food/${food.id}`} style={{ textDecoration: 'none' }}>
+                <h3 style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 4, color: '#1f2937' }}>{food.name}</h3>
+              </Link>
+              <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 8 }}>{food.shortDescription}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ color: '#fbbf24' }}>★</span>
+                <span style={{ fontSize: 14, color: '#4b5563' }}>{food.rating}</span>
+              </div>
+              <div style={styles.price}>${food.price}</div>
+              <button
+                onClick={() => handleAddToCart(food)}
+                style={styles.addBtn(addingId === food.id)}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                {addingId === food.id ? '✓ Added!' : '🛒 Add to Cart'}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

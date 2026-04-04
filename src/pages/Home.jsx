@@ -1,65 +1,86 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useFood } from '../context/FoodContext';
+import { useFood, useCart, useAuth } from '../App';
 
 const Home = () => {
   const { foods } = useFood();
   const featuredFoods = foods?.slice(0, 3) || [];
 
+  const styles = {
+    hero: {
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%)',
+      textAlign: 'center'
+    },
+    section: {
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      padding: '80px 0'
+    },
+    card: {
+      background: 'white',
+      borderRadius: '16px',
+      padding: '24px',
+      textAlign: 'center',
+      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+      transition: 'transform 0.3s'
+    }
+  };
+
   return (
     <div>
       {/* Hero Section */}
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-red-50">
-        <div className="container mx-auto px-4 text-center">
-          <div className="text-6xl mb-6 animate-bounce">🍔</div>
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+      <div style={styles.hero}>
+        <div>
+          <div style={{ fontSize: 64, marginBottom: 24 }}>🍔</div>
+          <h1 style={{ fontSize: 56, fontWeight: 'bold', marginBottom: 16, background: 'linear-gradient(135deg, #f97316, #ef4444)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             FoodieDash
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p style={{ fontSize: 20, color: '#4b5563', marginBottom: 32, maxWidth: 600, margin: '0 auto 32px' }}>
             Delivering happiness to your doorstep. Fresh, fast, and delicious!
           </p>
           <Link to="/menu">
-            <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition shadow-lg text-lg">
-              Order Now
-            </button>
+            <button className="btn-primary">Order Now</button>
           </Link>
         </div>
       </div>
 
-      {/* Features Section */}
-      <div className="min-h-screen flex items-center bg-white">
-        <div className="container mx-auto px-4 py-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
-            Why Choose Us?
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+      {/* Features */}
+      <div style={styles.section}>
+        <div className="container">
+          <h2 style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center', marginBottom: 48 }}>Why Choose Us?</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 32 }}>
             {[
               { icon: '⚡', title: 'Fast Delivery', desc: '30-minute delivery or free' },
               { icon: '🍽️', title: 'Quality Food', desc: 'Prepared with fresh ingredients' },
               { icon: '💳', title: 'Easy Payment', desc: 'Multiple payment options' }
-            ].map(feature => (
-              <div key={feature.title} className="text-center p-6 rounded-2xl hover:shadow-xl transition transform hover:scale-105">
-                <div className="text-5xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                <p className="text-gray-500">{feature.desc}</p>
+            ].map(f => (
+              <div key={f.title} style={styles.card}>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>{f.icon}</div>
+                <h3 style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 8 }}>{f.title}</h3>
+                <p style={{ color: '#6b7280' }}>{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Featured Foods Section */}
-      <div className="min-h-screen flex items-center bg-gray-50">
-        <div className="container mx-auto px-4 py-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
-            Featured Dishes
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+      {/* Featured Dishes */}
+      <div style={{ ...styles.section, background: '#f3f4f6' }}>
+        <div className="container">
+          <h2 style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center', marginBottom: 48 }}>Featured Dishes</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 32 }}>
             {featuredFoods.map(food => (
-              <Link to={`/food/${food.id}`} key={food.id} className="text-center group">
-                <img src={food.image} alt={food.name} className="w-48 h-48 object-cover rounded-full mx-auto mb-4 group-hover:scale-110 transition shadow-lg" />
-                <h3 className="text-xl font-bold">{food.name}</h3>
-                <p className="text-orange-500 font-bold mt-2">${food.price}</p>
+              <Link to={`/food/${food.id}`} key={food.id} style={{ textDecoration: 'none' }}>
+                <div style={styles.card}>
+                  <img src={food.image} alt={food.name} style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 12, marginBottom: 16 }} />
+                  <h3 style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 8, color: '#1f2937' }}>{food.name}</h3>
+                  <p style={{ color: '#f97316', fontWeight: 'bold', fontSize: 18 }}>${food.price}</p>
+                </div>
               </Link>
             ))}
           </div>
