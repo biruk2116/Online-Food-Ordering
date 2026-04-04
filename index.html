@@ -17,95 +17,72 @@
       }
       
       /* Light Mode (Default) */
+      :root {
+        --bg-primary: #f8fafc;
+        --bg-secondary: #ffffff;
+        --bg-card: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #475569;
+        --border-color: #e2e8f0;
+      }
+      
+      /* Dark Mode Variables */
+      body.dark-mode {
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-card: #1e293b;
+        --text-primary: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --border-color: #334155;
+      }
+      
       body {
-        background-color: #f8fafc;
-        color: #1e293b;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
         transition: all 0.3s ease;
       }
       
-      /* Dark Mode Styles */
-      body.dark-mode {
-        background-color: #0f172a !important;
-        color: #f1f5f9 !important;
-      }
-      
       /* Background Colors */
-      body.dark-mode .bg-white {
-        background-color: #1e293b !important;
-      }
-      
-      body.dark-mode .bg-gray-50,
-      body.dark-mode .bg-gray-100 {
-        background-color: #0f172a !important;
-      }
-      
-      body.dark-mode .bg-gray-200 {
-        background-color: #334155 !important;
-      }
-      
-      body.dark-mode .bg-gray-800 {
-        background-color: #1e293b !important;
-      }
-      
-      body.dark-mode .bg-gray-900 {
-        background-color: #0f172a !important;
-      }
+      .bg-white { background-color: var(--bg-secondary) !important; }
+      .bg-gray-50 { background-color: var(--bg-primary) !important; }
+      .bg-gray-100 { background-color: var(--bg-secondary) !important; }
+      .dark\:bg-gray-800 { background-color: var(--bg-secondary) !important; }
+      .dark\:bg-gray-900 { background-color: var(--bg-primary) !important; }
       
       /* Text Colors */
-      body.dark-mode .text-gray-800,
-      body.dark-mode .text-gray-900,
-      body.dark-mode .text-gray-700 {
-        color: #f1f5f9 !important;
-      }
-      
-      body.dark-mode .text-gray-600,
-      body.dark-mode .text-gray-500 {
-        color: #cbd5e1 !important;
-      }
-      
-      body.dark-mode .text-gray-400 {
-        color: #94a3b8 !important;
-      }
+      .text-gray-800, .text-gray-900, .text-gray-700 { color: var(--text-primary) !important; }
+      .text-gray-600, .text-gray-500 { color: var(--text-secondary) !important; }
+      .dark\:text-white, .dark\:text-gray-200 { color: var(--text-primary) !important; }
+      .dark\:text-gray-300, .dark\:text-gray-400 { color: var(--text-secondary) !important; }
       
       /* Border Colors */
-      body.dark-mode .border-gray-200,
-      body.dark-mode .border-gray-300 {
-        border-color: #334155 !important;
+      .border-gray-200, .border-gray-300, .dark\:border-gray-700 { border-color: var(--border-color) !important; }
+      
+      /* Input Fields */
+      input, textarea, select {
+        background-color: var(--bg-secondary) !important;
+        border-color: var(--border-color) !important;
+        color: var(--text-primary) !important;
       }
       
-      body.dark-mode .border-gray-100 {
-        border-color: #1e293b !important;
+      input::placeholder, textarea::placeholder {
+        color: var(--text-secondary) !important;
       }
       
-      /* Card Styles */
+      /* Cards */
+      .shadow-lg, .shadow-xl, .shadow-2xl {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      
       body.dark-mode .shadow-lg,
       body.dark-mode .shadow-xl,
       body.dark-mode .shadow-2xl {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
-      }
-      
-      /* Input Fields */
-      body.dark-mode input,
-      body.dark-mode textarea,
-      body.dark-mode select {
-        background-color: #1e293b !important;
-        border-color: #475569 !important;
-        color: #f1f5f9 !important;
-      }
-      
-      body.dark-mode input::placeholder,
-      body.dark-mode textarea::placeholder {
-        color: #94a3b8 !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
       }
       
       /* Hover Effects */
-      body.dark-mode .hover\:bg-gray-100:hover {
-        background-color: #334155 !important;
-      }
-      
-      body.dark-mode .hover\:bg-gray-50:hover {
-        background-color: #1e293b !important;
-      }
+      .hover\:bg-gray-100:hover { background-color: var(--border-color) !important; }
+      .hover\:bg-gray-50:hover { background-color: var(--bg-primary) !important; }
       
       /* Gradient Text - Always visible */
       .gradient-text {
@@ -128,36 +105,23 @@
       
       /* Animations */
       @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
       }
       
       @keyframes scaleIn {
-        from {
-          opacity: 0;
-          transform: scale(0.9);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
       }
       
       @keyframes slideInRight {
-        from {
-          opacity: 0;
-          transform: translateX(50px);
-        }
-        to {
-          opacity: 1;
-          transform: translateX(0);
-        }
+        from { opacity: 0; transform: translateX(50px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      
+      @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-50px); }
+        to { opacity: 1; transform: translateX(0); }
       }
       
       @keyframes bounce {
@@ -165,85 +129,39 @@
         50% { transform: translateY(-10px); }
       }
       
-      .animate-fadeInUp {
-        animation: fadeInUp 0.6s ease-out;
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
       }
       
-      .animate-scaleIn {
-        animation: scaleIn 0.5s ease-out;
-      }
-      
-      .animate-slideInRight {
-        animation: slideInRight 0.6s ease-out;
-      }
-      
-      .animate-bounce {
-        animation: bounce 1s infinite;
-      }
+      .animate-fadeInUp { animation: fadeInUp 0.6s ease-out; }
+      .animate-scaleIn { animation: scaleIn 0.5s ease-out; }
+      .animate-slideInRight { animation: slideInRight 0.6s ease-out; }
+      .animate-slideInLeft { animation: slideInLeft 0.6s ease-out; }
+      .animate-bounce { animation: bounce 1s infinite; }
+      .animate-pulse { animation: pulse 2s infinite; }
       
       /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 10px;
-      }
-      
-      ::-webkit-scrollbar-track {
-        background: #e2e8f0;
-      }
-      
-      body.dark-mode ::-webkit-scrollbar-track {
-        background: #1e293b;
-      }
-      
+      ::-webkit-scrollbar { width: 10px; }
+      ::-webkit-scrollbar-track { background: var(--border-color); }
       ::-webkit-scrollbar-thumb {
         background: linear-gradient(135deg, #f97316, #ef4444);
         border-radius: 5px;
       }
-      
       ::-webkit-scrollbar-thumb:hover {
         background: linear-gradient(135deg, #ea580c, #dc2626);
       }
       
       /* Smooth Scroll */
-      html {
-        scroll-behavior: smooth;
-      }
+      html { scroll-behavior: smooth; }
       
       /* Snap Scrolling */
-      .snap-container {
-        scroll-snap-type: y mandatory;
-        overflow-y: scroll;
-        height: 100vh;
-      }
-      
-      .snap-section {
-        scroll-snap-align: start;
-      }
+      .snap-container { scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh; }
+      .snap-section { scroll-snap-align: start; }
       
       /* Hover Effects */
-      .hover-lift {
-        transition: all 0.3s ease;
-      }
-      
-      .hover-lift:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-      }
-      
-      /* Cart Badge */
-      .cart-badge {
-        position: absolute;
-        top: -8px;
-        right: -12px;
-        background: linear-gradient(135deg, #f97316, #ef4444);
-        color: white;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        font-size: 11px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+      .hover-lift { transition: all 0.3s ease; }
+      .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
       
       /* Loading Spinner */
       .spinner {
@@ -254,11 +172,7 @@
         height: 40px;
         animation: spin 1s linear infinite;
       }
-      
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
   </head>
   <body>

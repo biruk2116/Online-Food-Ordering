@@ -11,6 +11,8 @@ import Signup from './pages/Signup';
 import AdminDashboard from './pages/AdminDashboard';
 import FoodDetails from './pages/FoodDetails';
 import Account from './pages/Account';
+import About from './pages/About';
+import Contact from './pages/Contact';
 
 // Contexts
 const AuthContext = createContext();
@@ -101,6 +103,17 @@ function App() {
     }
   }, []);
 
+  // Dark Mode Effect - ADD THIS
+  useEffect(() => {
+    if (isDark) {
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDark]);
+
   // Save data to localStorage
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
@@ -117,16 +130,6 @@ function App() {
   useEffect(() => {
     localStorage.setItem('categories', JSON.stringify(categories));
   }, [categories]);
-
-  useEffect(() => {
-    if (isDark) {
-      document.body.classList.add('dark-mode');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.body.classList.remove('dark-mode');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDark]);
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -278,6 +281,8 @@ function App() {
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/food/:id" element={<FoodDetails />} />
                     <Route path="/account" element={<Account />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
                   </Routes>
                   
                   {/* Notification Toast */}
