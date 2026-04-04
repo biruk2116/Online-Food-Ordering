@@ -22,13 +22,15 @@ const FoodCard = ({ food }) => {
   };
 
   return (
-    <div className={`group rounded-xl overflow-hidden shadow-sm transition-all duration-300 transform hover:-translate-y-1 ${
-      isDark ? 'bg-gray-800 hover:shadow-md' : 'bg-white hover:shadow-md'
+    <div className={`group rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 ${
+      isDark 
+        ? 'bg-[#1e1e2e] hover:bg-[#252540] shadow-lg' 
+        : 'bg-white hover:shadow-md shadow-sm'
     }`}>
       <Link to={`/food/${food.id}`}>
         <div className="relative overflow-hidden h-40">
           <img src={food.image} alt={food.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-          <div className="absolute top-2 right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold shadow">
+          <div className="absolute top-2 right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-lg">
             ${food.price}
           </div>
         </div>
@@ -42,7 +44,7 @@ const FoodCard = ({ food }) => {
             {food.name}
           </h3>
         </Link>
-        <p className={`text-xs mb-2 line-clamp-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+        <p className={`text-xs mb-2 line-clamp-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
           {food.shortDescription}
         </p>
         
@@ -61,7 +63,7 @@ const FoodCard = ({ food }) => {
         
         {showNutrition && (
           <div className={`rounded p-2 mb-2 space-y-1 text-xs animate-fadeInUp ${
-            isDark ? 'bg-gray-700' : 'bg-orange-50'
+            isDark ? 'bg-gray-800' : 'bg-orange-50'
           }`}>
             <div className="flex justify-between">
               <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>🔥 Calories</span>
@@ -89,12 +91,12 @@ const FoodCard = ({ food }) => {
             isAdding 
               ? 'bg-gray-400 cursor-not-allowed' 
               : 'bg-gradient-to-r from-orange-500 to-red-500 hover:scale-105'
-          } text-white`}
+          } text-white shadow-md`}
         >
           {isAdding ? (
             <><i className="fas fa-check text-xs"></i> Added!</>
           ) : (
-            <><i className="fas fa-cart-plus text-xs"></i> Add</>
+            <><i className="fas fa-cart-plus text-xs"></i> Add to Cart</>
           )}
         </button>
       </div>

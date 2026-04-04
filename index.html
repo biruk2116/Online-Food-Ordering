@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoodieDash - Premium Food Delivery</title>
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <!-- Google Fonts - Multiple Beautiful Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -23,128 +23,252 @@
       }
       
       body {
-        font-family: 'Inter', 'Poppins', 'Outfit', sans-serif;
+        font-family: 'Plus Jakarta Sans', 'Inter', 'Poppins', 'Outfit', sans-serif;
         transition: background-color 0.3s ease, color 0.3s ease;
       }
       
       /* ============================================ */
-      /* LIGHT MODE - Clean White Background */
+      /* LIGHT MODE - Extremely Attractive */
       /* ============================================ */
       body.light-mode {
-        background: #ffffff !important;
-        color: #1a1a2e;
+        background: linear-gradient(135deg, #fef3e8 0%, #fff5ed 25%, #ffffff 50%, #fff0e6 75%, #fef3e8 100%);
+        color: #2d1b0e;
       }
       
+      /* Beautiful Gradient Backgrounds for Sections */
+      body.light-mode .section-gradient-1 {
+        background: linear-gradient(135deg, #fff5ed 0%, #ffe8dc 100%);
+      }
+      
+      body.light-mode .section-gradient-2 {
+        background: linear-gradient(135deg, #ffffff 0%, #fef3e8 100%);
+      }
+      
+      body.light-mode .section-gradient-3 {
+        background: linear-gradient(135deg, #fef3e8 0%, #fff5ed 100%);
+      }
+      
+      /* Card Backgrounds with Soft Glass Effect */
       body.light-mode .bg-white,
       body.light-mode .bg-gray-50,
       body.light-mode .bg-gray-100 {
-        background: #ffffff !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(0px);
       }
       
-      /* Light Mode Text Colors - Clean & Readable */
+      /* Attractive Heading Colors */
       body.light-mode h1,
+      body.light-mode .h1-text {
+        background: linear-gradient(135deg, #f97316, #ef4444, #f97316);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        text-shadow: 2px 2px 4px rgba(249, 115, 22, 0.1);
+      }
+      
       body.light-mode h2,
-      body.light-mode h3,
-      body.light-mode h4,
+      body.light-mode .h2-text {
+        color: #1a1a2e;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        position: relative;
+        display: inline-block;
+      }
+      
+      body.light-mode h2::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        border-radius: 2px;
+      }
+      
+      body.light-mode h2.text-center::after {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      
+      /* Beautiful Text Colors */
+      body.light-mode .text-gray-800,
+      body.light-mode .text-gray-900,
       body.light-mode .font-bold,
       body.light-mode .font-semibold {
-        color: #1a1a2e !important;
+        color: #1e1b4b !important;
+        font-weight: 600;
       }
       
       body.light-mode p,
-      body.light-mode .text-gray-700,
-      body.light-mode .text-gray-800 {
-        color: #2d3561 !important;
+      body.light-mode .text-gray-700 {
+        color: #4c1d95 !important;
+        font-weight: 450;
+        line-height: 1.6;
       }
       
       body.light-mode .text-gray-600,
-      body.light-mode .text-gray-500,
-      body.light-mode .text-sm {
-        color: #5a6e8a !important;
+      body.light-mode .text-gray-500 {
+        color: #6b21a5 !important;
+        font-weight: 400;
       }
       
       body.light-mode .text-gray-400 {
-        color: #8a9bb0 !important;
+        color: #a855f7 !important;
       }
       
-      /* Light Mode Card Borders & Shadows */
-      body.light-mode .shadow-lg,
-      body.light-mode .shadow-xl,
-      body.light-mode .shadow-2xl {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02) !important;
+      /* Gradient Text for Special Words */
+      body.light-mode .gradient-text {
+        background: linear-gradient(135deg, #f97316, #ef4444, #dc2626);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 700;
+        animation: gradientShift 3s ease infinite;
+        background-size: 200% auto;
       }
       
-      body.light-mode .border-gray-200,
-      body.light-mode .border-gray-300 {
-        border-color: #eef2f6 !important;
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      
+      /* Card Styles with Hover Effects */
+      body.light-mode .card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(249, 115, 22, 0.1);
+      }
+      
+      body.light-mode .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.01);
+        border-color: rgba(249, 115, 22, 0.3);
+      }
+      
+      /* Button Styles */
+      body.light-mode .btn-primary {
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+        transition: all 0.3s ease;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+      
+      body.light-mode .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(249, 115, 22, 0.4);
+      }
+      
+      /* Input Fields */
+      body.light-mode input,
+      body.light-mode textarea,
+      body.light-mode select {
+        background: white;
+        border: 1px solid #f0dcc8;
+        color: #1e1b4b;
+        transition: all 0.3s ease;
+      }
+      
+      body.light-mode input:focus,
+      body.light-mode textarea:focus,
+      body.light-mode select:focus {
+        border-color: #f97316;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+        outline: none;
       }
       
       /* ============================================ */
-      /* DARK MODE */
+      /* DARK MODE - Dark with White Accents */
       /* ============================================ */
       body.dark-mode {
-        background: linear-gradient(135deg, #0f0c1f 0%, #1a1025 50%, #0d0a1a 100%);
-        color: #f0e6d8;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f1a 100%);
+        color: #e2e8f0;
       }
       
       body.dark-mode .bg-white,
       body.dark-mode .bg-gray-50,
-      body.dark-mode .bg-gray-100,
+      body.dark-mode .bg-gray-100 {
+        background: #1e1e2e !important;
+      }
+      
       body.dark-mode .bg-gray-800 {
-        background: rgba(30, 20, 40, 0.95) !important;
+        background: #16162a !important;
       }
       
-      body.dark-mode .text-gray-800,
-      body.dark-mode .text-gray-900,
-      body.dark-mode h1, 
-      body.dark-mode h2, 
-      body.dark-mode h3 {
-        color: #f0e6d8 !important;
+      body.dark-mode .bg-gray-900 {
+        background: #0f0f1a !important;
       }
       
-      body.dark-mode .text-gray-600,
-      body.dark-mode p {
-        color: #c4b5a5 !important;
+      body.dark-mode h1,
+      body.dark-mode h2,
+      body.dark-mode h3,
+      body.dark-mode h4 {
+        color: #ffffff !important;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+      }
+      
+      body.dark-mode p,
+      body.dark-mode .text-gray-700,
+      body.dark-mode .text-gray-800 {
+        color: #cbd5e1 !important;
       }
       
       /* ============================================ */
-      /* SLIDESHOW ANIMATIONS */
+      /* CUSTOM ANIMATIONS FOR HERO SECTION */
       /* ============================================ */
-      .slideshow-container {
-        position: relative;
-        width: 100%;
-        height: 100vh;
-        overflow: hidden;
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
       
-      .slide {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        transition: opacity 1s ease-in-out;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+      @keyframes scaleWidth {
+        from {
+          width: 0;
+          opacity: 0;
+        }
+        to {
+          width: 96px;
+          opacity: 1;
+        }
       }
       
-      .slide.active {
-        opacity: 1;
+      @keyframes float {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
       }
       
-      .slide-content {
-        position: absolute;
-        bottom: 20%;
-        left: 0;
-        right: 0;
-        text-align: center;
-        color: white;
-        animation: slideUp 0.8s ease-out;
+      @keyframes bounce-slow {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
       }
       
-      @keyframes slideUp {
+      @keyframes fadeInUp {
         from {
           opacity: 0;
           transform: translateY(30px);
@@ -155,73 +279,7 @@
         }
       }
       
-      .slide-dots {
-        position: absolute;
-        bottom: 20px;
-        left: 0;
-        right: 0;
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        z-index: 10;
-      }
-      
-      .dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.5);
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      
-      .dot.active {
-        background: #f97316;
-        width: 30px;
-        border-radius: 5px;
-      }
-      
-      .dot:hover {
-        background: #f97316;
-        transform: scale(1.2);
-      }
-      
-      /* ============================================ */
-      /* CARD STYLES */
-      /* ============================================ */
-      .card {
-        transition: all 0.3s ease;
-      }
-      
-      .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-      }
-      
-      /* ============================================ */
-      /* ANIMATIONS */
-      /* ============================================ */
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-      
-      @keyframes slideInLeft {
+      @keyframes fadeInLeft {
         from {
           opacity: 0;
           transform: translateX(-30px);
@@ -232,7 +290,7 @@
         }
       }
       
-      @keyframes slideInRight {
+      @keyframes fadeInRight {
         from {
           opacity: 0;
           transform: translateX(30px);
@@ -243,10 +301,10 @@
         }
       }
       
-      @keyframes scaleIn {
+      @keyframes zoomIn {
         from {
           opacity: 0;
-          transform: scale(0.95);
+          transform: scale(0.9);
         }
         to {
           opacity: 1;
@@ -263,34 +321,94 @@
         }
       }
       
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.05);
+        }
+      }
+      
+      @keyframes underlineSlide {
+        from {
+          width: 0;
+          opacity: 0;
+        }
+        to {
+          width: 100%;
+          opacity: 1;
+        }
+      }
+      
+      @keyframes shimmer {
+        0% {
+          background-position: -1000px 0;
+        }
+        100% {
+          background-position: 1000px 0;
+        }
+      }
+      
+      /* Animation Classes */
+      .animate-slideDown {
+        animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .animate-scaleWidth {
+        animation: scaleWidth 0.6s ease-out forwards;
+      }
+      
+      .animate-float {
+        animation: float 3s ease-in-out infinite;
+      }
+      
+      .animate-bounce-slow {
+        animation: bounce-slow 2s ease-in-out infinite;
+      }
+      
       .animate-fadeInUp {
         animation: fadeInUp 0.6s ease-out;
       }
       
-      .animate-fadeIn {
-        animation: fadeIn 0.4s ease-out;
+      .animate-fadeInLeft {
+        animation: fadeInLeft 0.6s ease-out;
       }
       
-      .animate-slideInLeft {
-        animation: slideInLeft 0.5s ease-out;
+      .animate-fadeInRight {
+        animation: fadeInRight 0.6s ease-out;
       }
       
-      .animate-slideInRight {
-        animation: slideInRight 0.5s ease-out;
-      }
-      
-      .animate-scaleIn {
-        animation: scaleIn 0.4s ease-out;
+      .animate-zoomIn {
+        animation: zoomIn 0.5s ease-out;
       }
       
       .animate-bounce {
         animation: bounce 1s infinite;
       }
       
+      .animate-pulse {
+        animation: pulse 2s infinite;
+      }
+      
+      /* Delay Classes */
+      .delay-100 { animation-delay: 0.1s; }
+      .delay-200 { animation-delay: 0.2s; }
+      .delay-300 { animation-delay: 0.3s; }
+      .delay-400 { animation-delay: 0.4s; }
+      .delay-500 { animation-delay: 0.5s; }
+      .delay-600 { animation-delay: 0.6s; }
+      .delay-700 { animation-delay: 0.7s; }
+      .delay-800 { animation-delay: 0.8s; }
+      
       /* ============================================ */
-      /* GRADIENT TEXT */
+      /* STATS COUNTER STYLES */
       /* ============================================ */
-      .gradient-text {
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 800;
         background: linear-gradient(135deg, #f97316, #ef4444);
         -webkit-background-clip: text;
         background-clip: text;
@@ -298,36 +416,27 @@
       }
       
       /* ============================================ */
-      /* BUTTON STYLES */
-      /* ============================================ */
-      .btn-primary {
-        background: linear-gradient(135deg, #f97316, #ef4444);
-        transition: all 0.3s ease;
-      }
-      
-      .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(249, 115, 22, 0.2);
-      }
-      
-      /* ============================================ */
       /* CUSTOM SCROLLBAR */
       /* ============================================ */
       ::-webkit-scrollbar {
-        width: 6px;
+        width: 8px;
       }
       
       ::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: linear-gradient(135deg, #fef3e8, #fff5ed);
       }
       
       body.dark-mode ::-webkit-scrollbar-track {
-        background: #2a1a30;
+        background: #1e1e2e;
       }
       
       ::-webkit-scrollbar-thumb {
         background: linear-gradient(135deg, #f97316, #ef4444);
-        border-radius: 3px;
+        border-radius: 4px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #ea580c, #dc2626);
       }
       
       /* ============================================ */
@@ -351,6 +460,11 @@
         display: none;
       }
       
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      
       /* ============================================ */
       /* RESPONSIVE FONTS */
       /* ============================================ */
@@ -366,6 +480,64 @@
         h2 {
           font-size: 24px !important;
         }
+        
+        .stat-number {
+          font-size: 1.5rem;
+        }
+      }
+      
+      /* ============================================ */
+      /* LOADING SPINNER */
+      /* ============================================ */
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(249, 115, 22, 0.2);
+        border-radius: 50%;
+        border-top-color: #f97316;
+        animation: spin 0.8s linear infinite;
+      }
+      
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      
+      /* ============================================ */
+      /* GLOW EFFECT FOR CARDS */
+      /* ============================================ */
+      .glow-on-hover {
+        transition: all 0.3s ease;
+      }
+      
+      .glow-on-hover:hover {
+        box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+        transform: translateY(-2px);
+      }
+      
+      /* ============================================ */
+      /* BEAUTIFUL GRADIENT BORDERS */
+      /* ============================================ */
+      .gradient-border {
+        position: relative;
+        background: white;
+        border-radius: 16px;
+      }
+      
+      .gradient-border::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        background: linear-gradient(135deg, #f97316, #ef4444, #f97316);
+        border-radius: 17px;
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .gradient-border:hover::before {
+        opacity: 1;
       }
     </style>
   </head>
