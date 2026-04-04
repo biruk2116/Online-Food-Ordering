@@ -1,57 +1,67 @@
 import React from 'react';
-import { useOrders, useAuth } from '../App';
+import { useAuth, useOrders } from '../App';
+import { Link } from 'react-router-dom';
 
 const OrderHistory = () => {
-  const { getUserOrders } = useOrders();
   const { user } = useAuth();
+  const { getUserOrders } = useOrders();
   const orders = getUserOrders();
 
-  const styles = {
-    container: { maxWidth: 1024, margin: '0 auto', padding: '32px 16px' },
-    card: { background: 'white', borderRadius: 16, padding: 20, marginBottom: 20, boxShadow: '0 4px 6px rgba(0,0,0,0.1)' },
-    badge: { padding: '4px 12px', borderRadius: 9999, fontSize: 12, fontWeight: 600, background: '#fef3c7', color: '#92400e' }
-  };
-
   if (!user) {
-    return <div style={{ textAlign: 'center', padding: 80 }}>Please login to view orders</div>;
+    return (
+      <div className="container mx-auto px-4 py-16 text-center mt-16">
+        <div className="text-6xl mb-4">🔒</div>
+        <h2 className="text-2xl font-bold mb-4">Please Login</h2>
+        <Link to="/login" className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-full">Login</Link>
+      </div>
+    );
   }
 
   if (orders.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '80px 16px' }}>
-        <div style={{ fontSize: 64, marginBottom: 16 }}>📦</div>
-        <h2 style={{ fontSize: 24, marginBottom: 16 }}>No orders yet</h2>
-        <p style={{ color: '#6b7280' }}>Start ordering some delicious food!</p>
+      <div className="container mx-auto px-4 py-16 text-center mt-16">
+        <div className="text-6xl mb-4">📦</div>
+        <h2 className="text-2xl font-bold mb-4">No orders yet</h2>
+        <Link to="/menu" className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-full">Start Ordering</Link>
       </div>
     );
   }
 
   return (
-    <div style={styles.container}>
-      <h1 style={{ fontSize: 32, fontWeight: 'bold', marginBottom: 32 }}>Order History</h1>
-      {orders.map(order => (
-        <div key={order.id} style={styles.card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
-            <span style={{ fontWeight: 'bold' }}>Order #{order.id}</span>
-            <span>{new Date(order.date).toLocaleDateString()}</span>
-            <span style={styles.badge}>{order.status}</span>
-          </div>
-          {order.items.map(item => (
-            <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f3f4f6' }}>
-              <span>{item.name} x{item.quantity}</span>
-              <span>${(item.price * item.quantity).toFixed(2)}</span>
+    <div className="container mx-auto px-4 py-8 max-w-4xl mt-16">
+      <h1 className="text-3xl font-bold mb-8">Order History</h1>
+      <div className="space-y-6">
+        {orders.map(order => (
+          <div key={order.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+            <div className="bg-gradient-to-r from-orange-500 to-red-500 p-4 text-white">
+              <div className="flex justify-between items-center flex-wrap gap-2">
+                <span className="font-mono text-sm">{order.orderNumber}</span>
+                <span>{new Date(order.date).toLocaleDateString()}</span>
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${order.status === 'Pending' ? 'bg-yellow-500' : 'bg-green-500'}`}>{order.status}</span>
+              </div>
             </div>
-          ))}
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, fontWeight: 'bold' }}>
-            <span>Total</span>
-            <span style={{ color: '#f97316' }}>${order.total.toFixed(2)}</span>
+            <div className="p-4">
+              {order.items.map(item => (
+                <div key={item.id} className="flex justify-between py-2">
+                  <span>{item.name} x{item.quantity}</span>
+                  <span>${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+              ))}
+              <div className="border-t pt-3 mt-2">
+                <div className="flex justify-between font-bold">
+                  <span>Total</span>
+                  <span className="text-orange-500">${order.total.toFixed(2)}</span>
+                </div>
+              </div>
+              <div className="mt-3 text-sm text-gray-500">
+                <p>Deliver to: {order.address}</p>
+                <p>Contact: {order.phone}</p>
+                <p>Payment: {order.paymentMethod || 'Cash on Delivery'}</p>
+              </div>
+            </div>
           </div>
-          <div style={{ marginTop: 12, fontSize: 14, color: '#6b7280' }}>
-            <p>Deliver to: {order.address}</p>
-            <p>Contact: {order.phone}</p>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

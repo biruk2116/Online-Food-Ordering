@@ -1,64 +1,255 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth, useFood } from '../App';
+import { useAuth, useFood, useOrders } from '../App';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
-  const { foods, addFood, deleteFood } = useFood();
-  const [newFood, setNewFood] = useState({ name: '', price: '', category: 'Burger', image: '' });
-
-  const styles = {
-    container: { maxWidth: 1280, margin: '0 auto', padding: '32px 16px' },
-    grid: { display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 32 },
-    card: { background: 'white', borderRadius: 16, padding: 24, boxShadow: '0 4px 6px rgba(0,0,0,0.1)' },
-    input: { width: '100%', padding: '12px', border: '1px solid #e5e7eb', borderRadius: 8, marginBottom: 16, fontSize: 16 },
-    button: { padding: '10px 20px', background: 'linear-gradient(135deg, #f97316, #ef4444)', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer' },
-    table: { width: '100%', borderCollapse: 'collapse' },
-    th: { padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' },
-    td: { padding: '12px', borderBottom: '1px solid #e5e7eb' }
-  };
+  const { foods, categories, addFood, updateFood, deleteFood, addCategory, updateCategory, deleteCategory } = useFood();
+  const { getAllOrders, updateOrderStatus } = useOrders();
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [editingFood, setEditingFood] = useState(null);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [foodForm, setFoodForm] = useState({
+    name: '', price: '', category: 'Burger', shortDescription: '', description: '',
+    nutrition: { calories: '', carbs: '', protein: '', fats: '' }, image: ''
+  });
+  const [categoryForm, setCategoryForm] = useState({ name: '', image: '' });
 
   if (!user || user.email !== 'admin@foodie.com') {
     return <Navigate to="/" />;
   }
 
-  const handleSubmit = (e) => {
+  const stats = {
+    totalFoods: foods.length,
+    totalCategories: categories.length,
+    totalOrders: getAllOrders().length,
+    totalUsers: JSON.parse(localStorage.getItem('users') || '[]').length
+  };
+
+  const handleFoodSubmit = (e) => {
     e.preventDefault();
-    addFood({ ...newFood, price: parseFloat(newFood.price), rating: 4.5, shortDescription: 'Delicious food', description: 'Amazing taste', calories: 500, carbs: 50, protein: 30, fats: 20 });
-    setNewFood({ name: '', price: '', category: 'Burger', image: '' });
+    const foodData = {
+      ...foodForm,
+      price: parseFloat(foodForm.price),
+      nutrition: {
+        calories: parseInt(foodForm.nutrition.calories),
+        carbs: parseInt(foodForm.nutrition.carbs),
+        protein: parseInt(foodForm.nutrition.protein),
+        fats: parseInt(foodForm.nutrition.fats)
+      },
+      rating: 4.5
+    };
+    if (editingFood) {
+      updateFood(editingFood.id, foodData);
+      setEditingFood(null);
+    } else {
+      addFood(foodData);
+    }
+    setFoodForm({ name: '', price: '', category: 'Burger', shortDescription: '', description: '', nutrition: { calories: '', carbs: '', protein: '', fats: '' }, image: '' });
+  };
+
+  const handleCategorySubmit = (e) => {
+    e.preventDefault();
+    if (editingCategory) {
+      updateCategory(editingCategory.id, categoryForm);
+      setEditingCategory(null);
+    } else {
+      addCategory(categoryForm);
+    }
+    setCategoryForm({ name: '', image: '' });
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={{ fontSize: 32, fontWeight: 'bold', marginBottom: 32 }}>Admin Dashboard</h1>
-      <div style={styles.grid}>
-        <div style={styles.card}>
-          <h2 style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>Add New Food</h2>
-          <form onSubmit={handleSubmit}>
-            <input type="text" placeholder="Food Name" value={newFood.name} onChange={e => setNewFood({...newFood, name: e.target.value})} style={styles.input} required />
-            <input type="number" placeholder="Price" value={newFood.price} onChange={e => setNewFood({...newFood, price: e.target.value})} style={styles.input} required />
-            <select value={newFood.category} onChange={e => setNewFood({...newFood, category: e.target.value})} style={styles.input}>
-              <option>Burger</option><option>Ethiopian</option><option>Beverage</option>
-            </select>
-            <input type="text" placeholder="Image URL" value={newFood.image} onChange={e => setNewFood({...newFood, image: e.target.value})} style={styles.input} required />
-            <button type="submit" style={styles.button}>Add Food</button>
-          </form>
+    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900 mt-16">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white dark:bg-gray-800 shadow-xl">
+        <div className="p-6 border-b dark:border-gray-700">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">Admin Panel</h2>
+          <p className="text-sm text-gray-500 mt-1">Welcome, {user.name}</p>
         </div>
-        
-        <div style={styles.card}>
-          <h2 style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>Food List</h2>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={styles.table}>
-              <thead><tr><th style={styles.th}>Name</th><th style={styles.th}>Price</th><th style={styles.th}>Category</th><th style={styles.th}>Action</th></tr></thead>
-              <tbody>
-                {foods.map(food => (
-                  <tr key={food.id}><td style={styles.td}>{food.name}</td><td style={styles.td}>${food.price}</td><td style={styles.td}>{food.category}</td><td style={styles.td}><button onClick={() => deleteFood(food.id)} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>Delete</button></td></tr>
-                ))}
-              </tbody>
-            </table>
+        <nav className="p-4 space-y-2">
+          {[
+            { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+            { id: 'foods', label: 'Food Management', icon: '🍔' },
+            { id: 'categories', label: 'Categories', icon: '📁' },
+            { id: 'orders', label: 'Orders', icon: '📦' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
+                activeTab === tab.id
+                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200'
+              }`}
+            >
+              <span className="text-xl">{tab.icon}</span>
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </nav>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 p-8 overflow-y-auto">
+        {activeTab === 'dashboard' && (
+          <div className="animate-fadeInUp">
+            <h1 className="text-3xl font-bold mb-8">Dashboard Overview</h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {[
+                { title: 'Total Foods', value: stats.totalFoods, icon: '🍔', color: 'from-orange-500 to-red-500' },
+                { title: 'Categories', value: stats.totalCategories, icon: '📁', color: 'from-blue-500 to-cyan-500' },
+                { title: 'Total Orders', value: stats.totalOrders, icon: '📦', color: 'from-green-500 to-teal-500' },
+                { title: 'Total Users', value: stats.totalUsers, icon: '👥', color: 'from-purple-500 to-pink-500' }
+              ].map(stat => (
+                <div key={stat.title} className={`bg-gradient-to-r ${stat.color} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300`}>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-sm opacity-90">{stat.title}</p>
+                      <p className="text-3xl font-bold mt-2">{stat.value}</p>
+                    </div>
+                    <span className="text-3xl">{stat.icon}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
+        )}
+
+        {activeTab === 'foods' && (
+          <div className="animate-fadeInUp">
+            <h1 className="text-3xl font-bold mb-8">Food Management</h1>
+            <div className="grid lg:grid-cols-3 gap-8">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h2 className="text-xl font-bold mb-4">{editingFood ? 'Edit Food' : 'Add New Food'}</h2>
+                <form onSubmit={handleFoodSubmit} className="space-y-4">
+                  <input type="text" placeholder="Food Name" value={foodForm.name} onChange={e => setFoodForm({...foodForm, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  <input type="number" step="0.01" placeholder="Price" value={foodForm.price} onChange={e => setFoodForm({...foodForm, price: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  <select value={foodForm.category} onChange={e => setFoodForm({...foodForm, category: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700">
+                    <option>Burger</option><option>Ethiopian</option><option>Beverage</option>
+                  </select>
+                  <input type="text" placeholder="Short Description" value={foodForm.shortDescription} onChange={e => setFoodForm({...foodForm, shortDescription: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  <textarea placeholder="Full Description" rows="2" value={foodForm.description} onChange={e => setFoodForm({...foodForm, description: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <input type="number" placeholder="Calories" value={foodForm.nutrition.calories} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, calories: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                    <input type="number" placeholder="Carbs (g)" value={foodForm.nutrition.carbs} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, carbs: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                    <input type="number" placeholder="Protein (g)" value={foodForm.nutrition.protein} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, protein: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                    <input type="number" placeholder="Fats (g)" value={foodForm.nutrition.fats} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, fats: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  </div>
+                  
+                  <input type="text" placeholder="Image URL" value={foodForm.image} onChange={e => setFoodForm({...foodForm, image: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  
+                  <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg font-semibold hover:scale-105 transition">
+                    {editingFood ? 'Update' : 'Add'} Food
+                  </button>
+                  {editingFood && (
+                    <button type="button" onClick={() => { setEditingFood(null); setFoodForm({ name: '', price: '', category: 'Burger', shortDescription: '', description: '', nutrition: { calories: '', carbs: '', protein: '', fats: '' }, image: '' }); }} className="w-full text-gray-500 text-sm">
+                      Cancel Edit
+                    </button>
+                  )}
+                </form>
+              </div>
+              
+              <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold mb-4">Food List</h2>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-100 dark:bg-gray-700">
+                      <tr><th className="p-3 text-left">Name</th><th>Price</th><th>Category</th><th>Calories</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                      {foods.map(food => (
+                        <tr key={food.id} className="border-b dark:border-gray-700">
+                          <td className="p-3">{food.name}</td>
+                          <td className="p-3">${food.price}</td>
+                          <td className="p-3">{food.category}</td>
+                          <td className="p-3">{food.nutrition.calories} cal</td>
+                          <td className="p-3 space-x-2">
+                            <button onClick={() => { setEditingFood(food); setFoodForm(food); }} className="text-blue-500 hover:scale-110 transition">✏️</button>
+                            <button onClick={() => deleteFood(food.id)} className="text-red-500 hover:scale-110 transition">🗑️</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'categories' && (
+          <div className="animate-fadeInUp">
+            <h1 className="text-3xl font-bold mb-8">Category Management</h1>
+            <div className="grid lg:grid-cols-2 gap-8">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h2 className="text-xl font-bold mb-4">{editingCategory ? 'Edit Category' : 'Add New Category'}</h2>
+                <form onSubmit={handleCategorySubmit} className="space-y-4">
+                  <input type="text" placeholder="Category Name" value={categoryForm.name} onChange={e => setCategoryForm({...categoryForm, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  <input type="text" placeholder="Image URL" value={categoryForm.image} onChange={e => setCategoryForm({...categoryForm, image: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg font-semibold hover:scale-105 transition">
+                    {editingCategory ? 'Update' : 'Add'} Category
+                  </button>
+                  {editingCategory && (
+                    <button type="button" onClick={() => { setEditingCategory(null); setCategoryForm({ name: '', image: '' }); }} className="w-full text-gray-500 text-sm">
+                      Cancel Edit
+                    </button>
+                  )}
+                </form>
+              </div>
+              
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold mb-4">Categories List</h2>
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {categories.map(cat => (
+                    <div key={cat.id} className="flex items-center gap-4 p-3 border rounded-lg dark:border-gray-700">
+                      <img src={cat.image} alt={cat.name} className="w-12 h-12 object-contain" />
+                      <div className="flex-1 font-semibold">{cat.name}</div>
+                      <button onClick={() => { setEditingCategory(cat); setCategoryForm({ name: cat.name, image: cat.image }); }} className="text-blue-500 hover:scale-110 transition">✏️</button>
+                      <button onClick={() => deleteCategory(cat.id)} className="text-red-500 hover:scale-110 transition">🗑️</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'orders' && (
+          <div className="animate-fadeInUp">
+            <h1 className="text-3xl font-bold mb-8">Order Management</h1>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-gray-100 dark:bg-gray-700">
+                  <tr><th className="p-3 text-left">Order #</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                  {getAllOrders().map(order => (
+                    <tr key={order.id} className="border-b dark:border-gray-700">
+                      <td className="p-3">{order.orderNumber}</td>
+                      <td className="p-3">{order.userName}</td>
+                      <td className="p-3">${order.total}</td>
+                      <td className="p-3">{order.paymentMethod || 'Cash'}</td>
+                      <td className="p-3">
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+                        }`}>{order.status}</span>
+                      </td>
+                      <td className="p-3">{new Date(order.date).toLocaleDateString()}</td>
+                      <td className="p-3">
+                        <button onClick={() => updateOrderStatus(order.id, order.status === 'Pending' ? 'Completed' : 'Pending')} className="text-blue-500 hover:scale-110 transition">
+                          Update
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 };

@@ -14,36 +14,29 @@ const Signup = () => {
     e.preventDefault();
     const success = await signup(name, email, password);
     if (success) {
-      navigate('/menu');
+      navigate('/');
     } else {
       setError('Email already registered');
     }
   };
 
-  const styles = {
-    container: { minHeight: 'calc(100vh - 73px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' },
-    card: { background: 'white', borderRadius: 24, padding: 32, maxWidth: 400, width: '100%', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' },
-    title: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 8 },
-    input: { width: '100%', padding: '12px', border: '1px solid #e5e7eb', borderRadius: 8, marginBottom: 16, fontSize: 16 },
-    button: { width: '100%', padding: '12px', background: 'linear-gradient(135deg, #f97316, #ef4444)', color: 'white', border: 'none', borderRadius: 8, fontSize: 16, fontWeight: 600, cursor: 'pointer' },
-    error: { color: '#ef4444', textAlign: 'center', marginBottom: 16, fontSize: 14 }
-  };
-
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <div style={{ textAlign: 'center', fontSize: 48, marginBottom: 16 }}>🍕</div>
-        <h2 style={styles.title}>Create Account</h2>
-        <p style={{ textAlign: 'center', color: '#6b7280', marginBottom: 24 }}>Join FoodieDash today</p>
-        <form onSubmit={handleSubmit}>
-          <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} style={styles.input} required />
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={styles.input} required />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={styles.input} required />
-          {error && <p style={styles.error}>{error}</p>}
-          <button type="submit" style={styles.button}>Sign Up</button>
+    <div className="min-h-screen flex items-center justify-center px-4 pt-20">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-md w-full animate-scaleIn">
+        <div className="text-center mb-8">
+          <div className="text-6xl mb-4 animate-bounce">🍕</div>
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-white">Create Account</h2>
+          <p className="text-gray-500 mt-2">Join FoodieDash today</p>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <input type="text" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" required />
+          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" required />
+          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="w-full px-4 py-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" required />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold hover:scale-105 transition">Sign Up</button>
         </form>
-        <p style={{ textAlign: 'center', marginTop: 24, color: '#6b7280' }}>
-          Already have an account? <Link to="/login" style={{ color: '#f97316', textDecoration: 'none' }}>Login</Link>
+        <p className="text-center mt-6 text-gray-600 dark:text-gray-400">
+          Already have an account? <Link to="/login" className="text-orange-500 hover:text-orange-600">Login</Link>
         </p>
       </div>
     </div>
