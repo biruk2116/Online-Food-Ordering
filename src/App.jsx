@@ -93,6 +93,12 @@ function App() {
     return saved === 'dark';
   });
 
+  // Hero Background State
+  const [heroBackground, setHeroBackground] = useState(() => {
+    const saved = localStorage.getItem('heroBackground');
+    return saved || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1920&h=1080&fit=crop';
+  });
+
   // Apply theme to body
   useEffect(() => {
     if (isDark) {
@@ -105,6 +111,17 @@ function App() {
       localStorage.setItem('theme', 'light');
     }
   }, [isDark]);
+
+  // Listen for hero background changes
+  useEffect(() => {
+    const handleHeroChange = (event) => {
+      if (event.detail && event.detail.imageUrl) {
+        setHeroBackground(event.detail.imageUrl);
+      }
+    };
+    window.addEventListener('heroBackgroundChanged', handleHeroChange);
+    return () => window.removeEventListener('heroBackgroundChanged', handleHeroChange);
+  }, []);
 
   // State Management
   const [user, setUser] = useState(null);
@@ -287,7 +304,7 @@ function App() {
   const cartValue = { cartItems, addToCart, updateQuantity, removeFromCart, getTotalPrice, getItemCount };
   const foodValue = { foods, categories, addFood, updateFood, deleteFood, addCategory, updateCategory, deleteCategory };
   const orderValue = { orders, placeOrder, getUserOrders: () => orders.filter(o => o.userId === user?.id), getAllOrders: () => orders };
-  const settingsValue = { isDark, setIsDark };
+  const settingsValue = { isDark, setIsDark, heroBackground, setHeroBackground };
 
   return (
     <SettingsContext.Provider value={settingsValue}>
