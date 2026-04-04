@@ -1,45 +1,41 @@
-import { createContext, useState, useEffect } from 'react';
-import { getStoredOrders, saveStoredOrder } from '../utils/localStorage';
+// src/context/OrderContext.jsx
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { storage } from '../utils/localStorage';
 
-export const OrderContext = createContext();
+const OrderContext = createContext();
+
+export const useOrders = () => useContext(OrderContext);
 
 export const OrderProvider = ({ children }) => {
-    const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([]);
 
-    useEffect(() => {
-        const stored = getStoredOrders();
-        setOrders(stored);
-    }, []);
+  useEffect(() => {
+    const savedOrders = storage.get('orders', []);
+    setOrders(savedOrders);
+  }, []);
 
-    const addOrder = (order) => {
-        saveStoredOrder(order);
-        setOrders(getStoredOrders()); // Refresh from local storage
+  const placeOrder = (orderDetails) => {
+    const newOrder = {
+      id: Date.now(),
+      ...orderDetails,
+      date: new Date().toISOString(),
+      status: 'Pending'
     };
+    const updated = [newOrder, ...orders];
+    setOrders(updated);
+    storage.set('orders', updated);
+    return newOrder;
+  };
 
-    const updateOrderStatus = (orderId, status, isPaid = false) => {
-        const stored = getStoredOrders();
-        const updated = stored.map(o => o.id === orderId ? { ...o, status, isPaid: isPaid || o.isPaid } : o);
-        localStorage.setItem('orders', JSON.stringify(updated));
-        setOrders(updated);
-    };
+  const updateOrderStatus = (id, status) => {
+    const updated = orders.map(order => order.id === id ? { ...order, status } : order);
+    setOrders(updated);
+    storage.set('orders', updated);
+  };
 
-    const approveOrder = (orderId) => {
-        const stored = getStoredOrders();
-        const updated = stored.map(o => o.id === orderId ? { ...o, status: 'Approved' } : o);
-        localStorage.setItem('orders', JSON.stringify(updated));
-        setOrders(updated);
-    };
-
-    const clearApprovedOrders = () => {
-        const stored = getStoredOrders();
-        const updated = stored.filter(o => o.status !== 'Approved');
-        localStorage.setItem('orders', JSON.stringify(updated));
-        setOrders(updated);
-    };
-
-    return (
-        <OrderContext.Provider value={{ orders, addOrder, updateOrderStatus, approveOrder, clearApprovedOrders }}>
-            {children}
-        </OrderContext.Provider>
-    );
+  return (
+    <OrderContext.Provider value={{ orders, placeOrder, updateOrderStatus }}>
+      {children}
+    </OrderContext.Provider>
+  );
 };

@@ -1,85 +1,49 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { initialMenuData } from '../data/menuData';
-import { getStoredFoods, saveStoredFoods } from '../utils/localStorage';
+// src/context/FoodContext.jsx
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { initialFoods } from '../data/menuData';
+import { storage } from '../utils/localStorage';
 
-export const FoodContext = createContext();
+const FoodContext = createContext();
+
+export const useFood = () => useContext(FoodContext);
 
 export const FoodProvider = ({ children }) => {
-    const [foods, setFoods] = useState([]);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [activeCategory, setActiveCategory] = useState('');
+  const [foods, setFoods] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        // If not in local storage yet, getStoredFoods returns initialMenuData
-        const stored = getStoredFoods(initialMenuData);
-        setFoods(stored);
-    }, []);
+  useEffect(() => {
+    const savedFoods = storage.get('foods');
+    if (savedFoods && savedFoods.length) {
+      setFoods(savedFoods);
+    } else {
+      setFoods(initialFoods);
+      storage.set('foods', initialFoods);
+    }
+    setLoading(false);
+  }, []);
 
-    const addFood = (food) => {
-        const newFoods = [...foods, { ...food, id: Date.now() }];
-        setFoods(newFoods);
-        saveStoredFoods(newFoods);
-    };
+  const addFood = (food) => {
+    const newFood = { ...food, id: Date.now() };
+    const updated = [...foods, newFood];
+    setFoods(updated);
+    storage.set('foods', updated);
+  };
 
-    const updateFood = (id, updatedFood) => {
-        const newFoods = foods.map(f => (f.id === id ? { ...f, ...updatedFood } : f));
-        setFoods(newFoods);
-        saveStoredFoods(newFoods);
-    };
+  const updateFood = (id, updatedFood) => {
+    const updated = foods.map(food => food.id === id ? { ...food, ...updatedFood } : food);
+    setFoods(updated);
+    storage.set('foods', updated);
+  };
 
-    const deleteFood = (id) => {
-        const newFoods = foods.filter(f => f.id !== id);
-        setFoods(newFoods);
-        saveStoredFoods(newFoods);
-    };
+  const deleteFood = (id) => {
+    const updated = foods.filter(food => food.id !== id);
+    setFoods(updated);
+    storage.set('foods', updated);
+  };
 
-    const rateFood = (foodId, userId, ratingValue) => {
-        const food = foods.find(f => f.id === foodId);
-        if (!food) return;
-
-        const currentRatings = food.ratings || [];
-        const userRatingIndex = currentRatings.findIndex(r => r.userId === userId);
-        
-        let newRatings = [...currentRatings];
-        if (userRatingIndex !== -1) {
-            newRatings[userRatingIndex].rating = ratingValue;
-        } else {
-            newRatings.push({ userId, rating: ratingValue });
-        }
-
-        const total = newRatings.reduce((sum, r) => sum + r.rating, 0);
-        const newAverage = newRatings.length > 0 ? (total / newRatings.length) : 0;
-
-        updateFood(foodId, { ...food, ratings: newRatings, rating: newAverage });
-    };
-
-    const filteredFoods = foods.filter(food => {
-        const matchesCategory = !activeCategory || activeCategory === 'All' || food.category === activeCategory;
-        const matchesSearch = food.name.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
-    });
-
-    // Auto-reset search if no matches found
-    useEffect(() => {
-        if (searchQuery !== '' && filteredFoods.length === 0) {
-            setSearchQuery('');
-        }
-    }, [searchQuery, filteredFoods.length]);
-
-    return (
-        <FoodContext.Provider value={{
-            foods: filteredFoods,
-            allFoods: foods,
-            addFood,
-            updateFood,
-            deleteFood,
-            rateFood,
-            searchQuery,
-            setSearchQuery,
-            activeCategory,
-            setActiveCategory
-        }}>
-            {children}
-        </FoodContext.Provider>
-    );
+  return (
+    <FoodContext.Provider value={{ foods, loading, addFood, updateFood, deleteFood }}>
+      {children}
+    </FoodContext.Provider>
+  );
 };

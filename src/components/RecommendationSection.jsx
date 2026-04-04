@@ -1,30 +1,22 @@
-import React, { useContext } from 'react';
-import { FoodContext } from '../context/FoodContext';
+// src/components/RecommendationSection.jsx
+import React from 'react';
 import FoodCard from './FoodCard';
 
-const RecommendationSection = () => {
-    const { allFoods } = useContext(FoodContext);
-
-    // Sort by rating and get top 4
-    const topRated = [...allFoods].sort((a, b) => b.rating - a.rating).slice(0, 4);
-
-    if (topRated.length === 0) return null;
-
-    return (
-        <section className="my-32">
-            <div className="flex items-center justify-between mb-12">
-                <div>
-                    <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Chef's <span className="text-brand-600">Specials</span></h2>
-                    <p className="text-slate-500 font-medium mt-2 text-lg italic">Handpicked flavors recommended for you</p>
-                </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {topRated.map(food => (
-                    <FoodCard key={`rec-${food.id}`} food={food} />
-                ))}
-            </div>
-        </section>
-    );
+const RecommendationSection = ({ foods }) => {
+  if (!foods.length) return null;
+  
+  return (
+    <div className="mt-12">
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+        <span>🌟</span> Recommended for You
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {foods.slice(0, 4).map(food => (
+          <FoodCard key={food.id} food={food} />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default RecommendationSection;

@@ -1,43 +1,44 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { getStoredUser, saveStoredUser } from '../utils/localStorage';
+// src/context/AuthContext.jsx
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { storage } from '../utils/localStorage';
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
+
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const storedUser = getStoredUser();
-        if (storedUser) {
-            setUser(storedUser);
-        }
-    }, []);
+  useEffect(() => {
+    const savedUser = storage.get('user');
+    if (savedUser) setUser(savedUser);
+    setLoading(false);
+  }, []);
 
-    const login = (email, password) => {
-        // Simulated login
-        const isAdmin = email === 'admin@food.com';
-        const loggedInUser = { email, role: isAdmin ? 'admin' : 'customer' };
-        setUser(loggedInUser);
-        saveStoredUser(loggedInUser);
-        return true;
-    };
+  const login = (email, password) => {
+    // Mock login - in real app, validate credentials
+    const mockUser = { id: 1, email, name: email.split('@')[0] };
+    setUser(mockUser);
+    storage.set('user', mockUser);
+    return true;
+  };
 
-    const signup = (name, email, password) => {
-        // Simulated signup
-        const newUser = { name, email, role: 'customer' };
-        setUser(newUser);
-        saveStoredUser(newUser);
-        return true;
-    };
+  const signup = (name, email, password) => {
+    const newUser = { id: Date.now(), name, email };
+    setUser(newUser);
+    storage.set('user', newUser);
+    return true;
+  };
 
-    const logout = () => {
-        setUser(null);
-        saveStoredUser(null);
-    };
+  const logout = () => {
+    setUser(null);
+    storage.remove('user');
+  };
 
-    return (
-        <AuthContext.Provider value={{ user, login, signup, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

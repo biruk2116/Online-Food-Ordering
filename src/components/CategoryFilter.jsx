@@ -1,28 +1,25 @@
+// src/components/CategoryFilter.jsx
 import React from 'react';
+import { categories } from '../data/menuData';
 
-const categories = ['All', 'Traditional', 'Fast Food', 'Traditional Drinks', 'Modern Drinks', 'Other Drinks', 'Desserts'];
-
-const CategoryFilter = ({ activeCategory, onSelectCategory }) => {
-    return (
-        <div className="relative w-full md:w-48">
-            <select
-                value={activeCategory}
-                onChange={(e) => onSelectCategory(e.target.value)}
-                className="w-full appearance-none bg-black/20 border border-white/10 text-white text-xs font-bold py-2.5 px-4 pr-10 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all cursor-pointer hover:bg-black/40"
-            >
-                {categories.map(category => (
-                    <option key={category} value={category} className="bg-slate-900 text-white">
-                        {category === 'All' ? 'All Categories' : category}
-                    </option>
-                ))}
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-brand-400">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path>
-                </svg>
-            </div>
-        </div>
-    );
+const CategoryFilter = ({ selectedCategory, onSelectCategory }) => {
+  return (
+    <div className="flex flex-wrap gap-3 mb-8">
+      {categories.map(cat => (
+        <button
+          key={cat}
+          onClick={() => onSelectCategory(cat)}
+          className={`px-5 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 ${
+            selectedCategory === cat
+              ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+          }`}
+        >
+          {cat}
+        </button>
+      ))}
+    </div>
+  );
 };
 
 export default CategoryFilter;

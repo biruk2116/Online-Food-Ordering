@@ -1,29 +1,14 @@
-import React, { createContext, useState, useEffect } from 'react';
+// src/context/SettingsContext.jsx
+import React, { createContext, useContext } from 'react';
 
-export const SettingsContext = createContext();
+const SettingsContext = createContext();
 
-export const SettingsProvider = ({ children }) => {
-    const [backgroundImage, setBackgroundImage] = useState('');
+export const useSettings = () => useContext(SettingsContext);
 
-    useEffect(() => {
-        const storedImage = localStorage.getItem('app_background');
-        if (storedImage) {
-            setBackgroundImage(storedImage);
-        }
-    }, []);
-
-    const updateBackgroundImage = (imageUrl) => {
-        setBackgroundImage(imageUrl);
-        if (imageUrl) {
-            localStorage.setItem('app_background', imageUrl);
-        } else {
-            localStorage.removeItem('app_background');
-        }
-    };
-
-    return (
-        <SettingsContext.Provider value={{ backgroundImage, updateBackgroundImage }}>
-            {children}
-        </SettingsContext.Provider>
-    );
+export const SettingsProvider = ({ children, value }) => {
+  return (
+    <SettingsContext.Provider value={value}>
+      {children}
+    </SettingsContext.Provider>
+  );
 };
