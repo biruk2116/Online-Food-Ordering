@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useFood } from '../App';
 import FoodCard from '../components/FoodCard';
 import Footer from '../components/Footer';
+import burgerBg from '../assets/images/Burger.jpg';
 
 const Home = () => {
   const { foods } = useFood();
@@ -37,16 +38,25 @@ const Home = () => {
   ];
 
   return (
-    <div className="snap-container">
-      {/* Hero Section */}
-      <section ref={heroRef} className="snap-section min-h-screen flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-900 dark:to-gray-800"></div>
+    <div>
+      {/* Hero Section with Background Image */}
+      <section 
+        ref={heroRef} 
+        className="min-h-screen flex items-center justify-center relative overflow-hidden"
+        style={{
+          backgroundImage: `url(${burgerBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="absolute inset-0 bg-black bg-opacity-60"></div>
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="animate-bounce text-8xl mb-6">🍔</div>
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent animate-fadeInUp">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white animate-fadeInUp">
             FoodieDash
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto animate-slideInLeft">
+          <p className="text-xl text-gray-200 mb-8 max-w-2xl mx-auto animate-slideInLeft">
             Delivering happiness to your doorstep. Fresh, fast, and delicious!
           </p>
           <button onClick={() => menuRef.current?.scrollIntoView({ behavior: 'smooth' })} className="btn-primary px-8 py-3 rounded-full font-semibold text-lg animate-slideInRight">
@@ -56,7 +66,7 @@ const Home = () => {
       </section>
 
       {/* Why Choose Us Section */}
-      <section className="snap-section min-h-screen flex items-center bg-white dark:bg-gray-800">
+      <section className="min-h-screen flex items-center bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4 py-16">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 gradient-text">Why Choose Us?</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -77,7 +87,7 @@ const Home = () => {
       </section>
 
       {/* About Us Section */}
-      <section ref={aboutRef} className="snap-section min-h-screen flex items-center bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-900 dark:to-gray-800">
+      <section ref={aboutRef} className="min-h-screen flex items-center bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-900 dark:to-gray-800">
         <div className="container mx-auto px-4 py-16">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="animate-slideInLeft">
@@ -104,7 +114,7 @@ const Home = () => {
       </section>
 
       {/* Featured Dishes Section */}
-      <section className="snap-section min-h-screen flex items-center bg-white dark:bg-gray-800">
+      <section className="min-h-screen flex items-center bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4 py-16">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 gradient-text">Featured Dishes</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -128,7 +138,7 @@ const Home = () => {
       </section>
 
       {/* Full Menu Section */}
-      <section ref={menuRef} className="snap-section min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-16">
+      <section ref={menuRef} className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 gradient-text">Our Full Menu</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -141,52 +151,52 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Contact Section - Attractive & Animated */}
-      <section ref={contactRef} className="snap-section min-h-screen flex items-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="container mx-auto px-4 py-16">
-          <div className="text-center mb-12">
-            <div className="text-6xl mb-4 animate-bounce">📞</div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">Get In Touch</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">We'd love to hear from you! Send us a message and we'll respond within 24 hours.</p>
-          </div>
-          
+      {/* Contact Section - Compact and Interactive */}
+      <section ref={contactRef} className="py-20 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+        <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <div className="text-5xl mb-3 animate-bounce">📞</div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 gradient-text">Get In Touch</h2>
+              <p className="text-gray-600 dark:text-gray-300">We'd love to hear from you!</p>
+            </div>
+            
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-all duration-500">
               <div className="grid md:grid-cols-2">
                 {/* Contact Info */}
-                <div className="bg-gradient-to-br from-orange-500 to-red-500 p-8 text-white">
-                  <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <i className="fas fa-map-marker-alt text-2xl"></i>
-                      <div>Bole Road, Addis Ababa, Ethiopia</div>
+                <div className="bg-gradient-to-br from-orange-500 to-red-500 p-6 text-white">
+                  <h3 className="text-xl font-bold mb-4">Contact Information</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 group">
+                      <i className="fas fa-map-marker-alt text-xl group-hover:scale-110 transition"></i>
+                      <div className="text-sm">Bole Road, Addis Ababa, Ethiopia</div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <i className="fas fa-phone text-2xl"></i>
-                      <div>+251 911 123 456</div>
+                    <div className="flex items-center gap-3 group">
+                      <i className="fas fa-phone text-xl group-hover:scale-110 transition"></i>
+                      <div className="text-sm">+251 911 123 456</div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <i className="fas fa-envelope text-2xl"></i>
-                      <div>support@foodiedash.com</div>
+                    <div className="flex items-center gap-3 group">
+                      <i className="fas fa-envelope text-xl group-hover:scale-110 transition"></i>
+                      <div className="text-sm">support@foodiedash.com</div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <i className="fas fa-clock text-2xl"></i>
-                      <div>24/7 Customer Support</div>
+                    <div className="flex items-center gap-3 group">
+                      <i className="fas fa-clock text-xl group-hover:scale-110 transition"></i>
+                      <div className="text-sm">24/7 Customer Support</div>
                     </div>
                   </div>
-                  <div className="mt-8">
-                    <h4 className="font-semibold mb-3">Follow Us</h4>
-                    <div className="flex space-x-3">
-                      <a href="#" className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-orange-500 transition transform hover:scale-110">
+                  <div className="mt-6">
+                    <h4 className="font-semibold mb-2 text-sm">Follow Us</h4>
+                    <div className="flex space-x-2">
+                      <a href="#" className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-orange-500 transition transform hover:scale-110 text-sm">
                         <i className="fab fa-facebook-f"></i>
                       </a>
-                      <a href="#" className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-orange-500 transition transform hover:scale-110">
+                      <a href="#" className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-orange-500 transition transform hover:scale-110 text-sm">
                         <i className="fab fa-instagram"></i>
                       </a>
-                      <a href="#" className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-orange-500 transition transform hover:scale-110">
+                      <a href="#" className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-orange-500 transition transform hover:scale-110 text-sm">
                         <i className="fab fa-twitter"></i>
                       </a>
-                      <a href="#" className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-orange-500 transition transform hover:scale-110">
+                      <a href="#" className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-orange-500 transition transform hover:scale-110 text-sm">
                         <i className="fab fa-telegram"></i>
                       </a>
                     </div>
@@ -194,18 +204,18 @@ const Home = () => {
                 </div>
                 
                 {/* Contact Form */}
-                <div className="p-8">
-                  <h3 className="text-2xl font-bold mb-6 dark:text-white">Send Message</h3>
-                  <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <input type="text" placeholder="Your Name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500" required />
-                    <input type="email" placeholder="Email Address" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500" required />
-                    <textarea rows="4" placeholder="Your Message" value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500" required></textarea>
-                    <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold hover:scale-105 transition transform">
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-4 dark:text-white">Send Message</h3>
+                  <form onSubmit={handleContactSubmit} className="space-y-3">
+                    <input type="text" placeholder="Your Name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
+                    <input type="email" placeholder="Email Address" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
+                    <textarea rows="3" placeholder="Your Message" value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required></textarea>
+                    <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg font-semibold hover:scale-105 transition text-sm">
                       Send Message
                     </button>
                     {submitted && (
-                      <div className="text-green-500 text-center animate-fadeInUp">
-                        <i className="fas fa-check-circle mr-2"></i> Message sent successfully!
+                      <div className="text-green-500 text-center text-sm animate-fadeInUp">
+                        <i className="fas fa-check-circle mr-1"></i> Message sent!
                       </div>
                     )}
                   </form>
@@ -217,7 +227,7 @@ const Home = () => {
       </section>
 
       {/* Map Section */}
-      <section className="snap-section min-h-screen flex items-center bg-white dark:bg-gray-800">
+      <section className="min-h-screen flex items-center bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4 py-16">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 gradient-text">Our Location</h2>
           <div className="rounded-2xl overflow-hidden shadow-2xl">

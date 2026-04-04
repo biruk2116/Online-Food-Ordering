@@ -11,8 +11,6 @@ import Signup from './pages/Signup';
 import AdminDashboard from './pages/AdminDashboard';
 import FoodDetails from './pages/FoodDetails';
 import Account from './pages/Account';
-import About from './pages/About';
-import Contact from './pages/Contact';
 
 // Contexts
 const AuthContext = createContext();
@@ -64,6 +62,20 @@ const initialFoods = [
     shortDescription: "Honey wine",
     description: "Traditional Ethiopian honey wine.",
     nutrition: { calories: 180, carbs: 25, protein: 0, fats: 0 }
+  },
+  { 
+    id: 7, name: "Cheese Burger", price: 11.99, category: "Burger", rating: 4.3, 
+    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
+    shortDescription: "Classic cheeseburger",
+    description: "Classic cheeseburger with melted cheddar cheese.",
+    nutrition: { calories: 780, carbs: 58, protein: 32, fats: 45 }
+  },
+  { 
+    id: 8, name: "Double Burger", price: 15.99, category: "Burger", rating: 4.6, 
+    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
+    shortDescription: "Double patty burger",
+    description: "Two juicy beef patties stacked with double cheese.",
+    nutrition: { calories: 1050, carbs: 72, protein: 52, fats: 58 }
   }
 ];
 
@@ -103,7 +115,7 @@ function App() {
     }
   }, []);
 
-  // Dark Mode Effect - ADD THIS
+  // Dark Mode Effect
   useEffect(() => {
     if (isDark) {
       document.body.classList.add('dark-mode');
@@ -156,7 +168,14 @@ function App() {
       showNotification('Email already exists', 'error');
       return false;
     }
-    const newUser = { id: Date.now(), name, email, password, role: email === 'admin@foodie.com' ? 'admin' : 'user', createdAt: new Date().toISOString() };
+    const newUser = { 
+      id: Date.now(), 
+      name, 
+      email, 
+      password, 
+      role: email === 'admin@foodie.com' ? 'admin' : 'user', 
+      createdAt: new Date().toISOString() 
+    };
     users.push(newUser);
     localStorage.setItem('users', JSON.stringify(users));
     const { password: _, ...userData } = newUser;
@@ -268,7 +287,7 @@ function App() {
           <FoodContext.Provider value={foodValue}>
             <OrderContext.Provider value={orderValue}>
               <Router>
-                <div style={{ minHeight: '100vh', backgroundColor: isDark ? '#0f172a' : '#f8fafc' }}>
+                <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
                   <Navbar />
                   <Routes>
                     <Route path="/" element={<Home />} />
@@ -281,11 +300,8 @@ function App() {
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/food/:id" element={<FoodDetails />} />
                     <Route path="/account" element={<Account />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/contact" element={<Contact />} />
                   </Routes>
                   
-                  {/* Notification Toast */}
                   {notification && (
                     <div className="fixed bottom-4 right-4 z-50 animate-fadeInUp">
                       <div className={`px-6 py-3 rounded-lg shadow-lg text-white ${
@@ -306,7 +322,6 @@ function App() {
   );
 }
 
-// Custom Hooks
 export const useAuth = () => useContext(AuthContext);
 export const useCart = () => useContext(CartContext);
 export const useFood = () => useContext(FoodContext);
