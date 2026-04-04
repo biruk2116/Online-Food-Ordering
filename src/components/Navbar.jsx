@@ -1,112 +1,183 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart, useAuth, useSettings } from '../App';
 
 const Navbar = () => {
-  const { getItemCount } = useCart();
+  const { getItemCount, cartItems } = useCart();
   const { user, logout } = useAuth();
   const { isDark, setIsDark } = useSettings();
   const navigate = useNavigate();
-  const [showMenu, setShowMenu] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showCartPanel, setShowCartPanel] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
+    setShowUserMenu(false);
     navigate('/login');
   };
 
-  const styles = {
-    navbar: {
-      position: 'sticky',
-      top: 0,
-      zIndex: 50,
-      background: isDark ? '#1f2937' : 'white',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-      padding: '12px 0'
-    },
-    container: {
-      maxWidth: 1280,
-      margin: '0 auto',
-      padding: '0 16px',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      flexWrap: 'wrap'
-    },
-    logo: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      background: 'linear-gradient(135deg, #f97316, #ef4444)',
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-      textDecoration: 'none'
-    },
-    link: {
-      color: isDark ? '#f3f4f6' : '#374151',
-      textDecoration: 'none',
-      transition: 'color 0.3s'
-    },
-    cartIcon: {
-      position: 'relative',
-      cursor: 'pointer',
-      fontSize: 24
-    },
-    cartBadge: {
-      position: 'absolute',
-      top: -8,
-      right: -12,
-      background: '#f97316',
-      color: 'white',
-      borderRadius: '50%',
-      width: 20,
-      height: 20,
-      fontSize: 12,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
     }
+    navigate('/');
   };
 
   return (
-    <nav style={styles.navbar}>
-      <div style={styles.container}>
-        <Link to="/" style={styles.logo}>FoodieDash</Link>
-        
-        <div style={{ display: 'flex', gap: 24, alignItems: 'center', flexWrap: 'wrap' }}>
-          <Link to="/" style={styles.link}>Home</Link>
-          <Link to="/menu" style={styles.link}>Menu</Link>
-          <Link to="/about" style={styles.link}>About</Link>
-          <Link to="/contact" style={styles.link}>Contact</Link>
+    <>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
+      }`}>
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          {/* Logo */}
+          <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent hover:scale-105 transition-transform">
+            FoodieDash
+          </Link>
           
-          <button onClick={() => setIsDark(!isDark)} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer' }}>
-            {isDark ? '☀️' : '🌙'}
-          </button>
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center space-x-8">
+            <button onClick={() => scrollToSection('hero')} className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">Home</button>
+            <button onClick={() => scrollToSection('menu-section')} className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">Menu</button>
+            <button onClick={() => scrollToSection('about-section')} className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">About</button>
+            <Link to="/contact" className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">Contact</Link>
+          </div>
+          
+          {/* Right Side Icons */}
+          <div className="flex items-center space-x-4">
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setIsDark(!isDark)}
+              className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:scale-110 transition-transform"
+            >
+              {isDark ? '☀️' : '🌙'}
+            </button>
+            
+            {/* Cart Icon */}
+            <button 
+              onClick={() => setShowCartPanel(true)}
+              className="relative p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:scale-110 transition-transform"
+            >
+              <i className="fas fa-shopping-cart text-gray-700 dark:text-gray-200"></i>
+              {getItemCount() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                  {getItemCount()}
+                </span>
+              )}
+            </button>
+            
+            {/* User Profile */}
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center space-x-2 p-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white hover:scale-105 transition-transform"
+                >
+                  <i className="fas fa-user"></i>
+                  <span className="hidden md:inline">{user.name.split(' ')[0]}</span>
+                </button>
+                
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-2 animate-scaleIn">
+                    <Link to="/account" className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <i className="fas fa-user-circle mr-2"></i> My Account
+                    </Link>
+                    <Link to="/orders" className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <i className="fas fa-history mr-2"></i> Order History
+                    </Link>
+                    {user.email === 'admin@foodie.com' && (
+                      <Link to="/admin" className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i className="fas fa-cog mr-2"></i> Admin Panel
+                      </Link>
+                    )}
+                    <hr className="my-2 border-gray-200 dark:border-gray-700" />
+                    <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <i className="fas fa-sign-out-alt mr-2"></i> Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link to="/login">
+                <button className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full hover:scale-105 transition-transform">
+                  Login
+                </button>
+              </Link>
+            )}
+          </div>
+        </div>
+      </nav>
 
-          {user ? (
-            <div style={{ position: 'relative' }}>
-              <button onClick={() => setShowMenu(!showMenu)} style={{ background: 'linear-gradient(135deg, #f97316, #ef4444)', color: 'white', padding: '8px 16px', borderRadius: 9999, border: 'none', cursor: 'pointer' }}>
-                👤 {user.name.split(' ')[0]}
-              </button>
-              {showMenu && (
-                <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: 8, background: 'white', borderRadius: 8, boxShadow: '0 4px 6px rgba(0,0,0,0.1)', padding: 8, minWidth: 150, zIndex: 50 }}>
-                  <Link to="/orders" style={{ display: 'block', padding: '8px 16px', textDecoration: 'none', color: '#374151' }}>My Orders</Link>
-                  {user.email === 'admin@foodie.com' && (
-                    <Link to="/admin" style={{ display: 'block', padding: '8px 16px', textDecoration: 'none', color: '#374151' }}>Admin</Link>
-                  )}
-                  <button onClick={handleLogout} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 16px', background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}>Logout</button>
+      {/* Cart Side Panel */}
+      {showCartPanel && (
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setShowCartPanel(false)} />
+          <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-gray-800 shadow-2xl z-50 transform transition-transform duration-300 animate-slideInRight">
+            <div className="flex flex-col h-full">
+              <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
+                <h2 className="text-xl font-bold">Your Cart ({getItemCount()} items)</h2>
+                <button onClick={() => setShowCartPanel(false)} className="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto p-4">
+                {cartItems.length === 0 ? (
+                  <div className="text-center py-8">
+                    <i className="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
+                    <p className="text-gray-500">Your cart is empty</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {cartItems.map(item => (
+                      <div key={item.id} className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg" />
+                        <div className="flex-1">
+                          <h3 className="font-semibold">{item.name}</h3>
+                          <p className="text-orange-500 font-bold">${item.price}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <button onClick={() => {
+                              const { updateQuantity } = useCart();
+                              updateQuantity(item.id, item.quantity - 1);
+                            }} className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300">-</button>
+                            <span className="w-8 text-center">{item.quantity}</span>
+                            <button onClick={() => {
+                              const { updateQuantity } = useCart();
+                              updateQuantity(item.id, item.quantity + 1);
+                            }} className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300">+</button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              {cartItems.length > 0 && (
+                <div className="border-t dark:border-gray-700 p-4 space-y-4">
+                  <div className="flex justify-between text-xl font-bold">
+                    <span>Total:</span>
+                    <span className="text-orange-500">${cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0).toFixed(2)}</span>
+                  </div>
+                  <Link to="/checkout" onClick={() => setShowCartPanel(false)}>
+                    <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold hover:scale-105 transition-transform">
+                      Proceed to Checkout
+                    </button>
+                  </Link>
                 </div>
               )}
             </div>
-          ) : (
-            <Link to="/login" style={{ background: 'linear-gradient(135deg, #f97316, #ef4444)', color: 'white', padding: '8px 16px', borderRadius: 9999, textDecoration: 'none' }}>Login</Link>
-          )}
-          
-          <Link to="/cart" style={styles.cartIcon}>
-            🛒
-            {getItemCount() > 0 && <span style={styles.cartBadge}>{getItemCount()}</span>}
-          </Link>
-        </div>
-      </div>
-    </nav>
+          </div>
+        </>
+      )}
+    </>
   );
 };
 

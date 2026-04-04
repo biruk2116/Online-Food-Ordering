@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
+import { useCart, useAuth } from '../App';
 
 const FoodCard = ({ food }) => {
   const { addToCart } = useCart();
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
+  const [showNutrition, setShowNutrition] = useState(false);
 
   const handleAddToCart = async (e) => {
+    e.preventDefault();
     e.stopPropagation();
     if (!user) {
       alert('Please login first to add items to cart!');
-      navigate('/login');
       return;
     }
     setIsAdding(true);
@@ -23,47 +21,57 @@ const FoodCard = ({ food }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden">
-      <div className="relative overflow-hidden h-48 cursor-pointer" onClick={() => navigate(`/food/${food.id}`)}>
-        <img src={food.image} alt={food.name} className="w-full h-full object-cover hover:scale-110 transition duration-500" />
-        <div className="absolute top-2 right-2 bg-white/90 rounded-full px-2 py-1 text-sm font-semibold">
-          ${food.price}
+    <div className="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+      <Link to={`/food/${food.id}`}>
+        <div className="relative overflow-hidden h-48">
+          <img src={food.image} alt={food.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+          <div className="absolute top-3 right-3 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+            ${food.price}
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="flex items-center justify-center space-x-2 text-white">
+              <i className="fas fa-star text-yellow-400"></i>
+              <span>{food.rating}</span>
+              <span className="mx-2">•</span>
+              <i className="fas fa-fire"></i>
+              <span>{food.nutrition.calories} cal</span>
+            </div>
+          </div>
         </div>
-      </div>
+      </Link>
+      
       <div className="p-4">
-        <h3 className="text-xl font-bold text-gray-800 mb-1">{food.name}</h3>
-        <p className="text-gray-500 text-sm mb-2 line-clamp-2">{food.shortDescription}</p>
-        <div className="flex items-center gap-1 mb-3">
-          <span className="text-yellow-400">★</span>
-          <span className="text-sm">{food.rating}</span>
-        </div>
+        <Link to={`/food/${food.id}`}>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-1 hover:text-orange-500 transition">{food.name}</h3>
+        </Link>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-3 line-clamp-2">{food.shortDescription}</p>
         
-        {/* Nutritional Info Dropdown */}
+        {/* Nutrition Dropdown */}
         <button
-          onClick={() => setShowDetails(!showDetails)}
-          className="w-full text-left text-sm text-orange-500 mb-2 flex items-center justify-between"
+          onClick={() => setShowNutrition(!showNutrition)}
+          className="w-full flex items-center justify-between text-sm text-orange-500 mb-3 hover:bg-orange-50 dark:hover:bg-gray-700 px-3 py-2 rounded-lg transition"
         >
-          <span>Nutritional Information</span>
-          <span>{showDetails ? '▲' : '▼'}</span>
+          <span><i className="fas fa-chart-line mr-2"></i>Nutrition Facts</span>
+          <i className={`fas fa-chevron-${showNutrition ? 'up' : 'down'} transition-transform`}></i>
         </button>
         
-        {showDetails && (
-          <div className="bg-gray-50 rounded-lg p-3 mb-3 space-y-2">
+        {showNutrition && (
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4 space-y-2 animate-fadeInUp">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">🔥 Calories:</span>
-              <span className="font-semibold">{food.calories} cal</span>
+              <span className="text-gray-600 dark:text-gray-300"><i className="fas fa-fire mr-2 text-orange-500"></i>Calories</span>
+              <span className="font-semibold">{food.nutrition.calories} kcal</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">🍞 Carbohydrates:</span>
-              <span className="font-semibold">{food.carbs}g</span>
+              <span className="text-gray-600 dark:text-gray-300"><i className="fas fa-bread-slice mr-2 text-yellow-500"></i>Carbohydrates</span>
+              <span className="font-semibold">{food.nutrition.carbs}g</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">💪 Protein:</span>
-              <span className="font-semibold">{food.protein}g</span>
+              <span className="text-gray-600 dark:text-gray-300"><i className="fas fa-dumbbell mr-2 text-blue-500"></i>Protein</span>
+              <span className="font-semibold">{food.nutrition.protein}g</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">🧈 Fats:</span>
-              <span className="font-semibold">{food.fats || 15}g</span>
+              <span className="text-gray-600 dark:text-gray-300"><i className="fas fa-oil-can mr-2 text-red-500"></i>Fats</span>
+              <span className="font-semibold">{food.nutrition.fats}g</span>
             </div>
           </div>
         )}
@@ -72,10 +80,14 @@ const FoodCard = ({ food }) => {
           onClick={handleAddToCart}
           disabled={isAdding}
           className={`w-full py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-            isAdding ? 'bg-gray-400' : 'bg-gradient-to-r from-orange-500 to-red-500 hover:scale-105'
-          } text-white`}
+            isAdding ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-orange-500 to-red-500 hover:scale-105'
+          } text-white shadow-lg`}
         >
-          {isAdding ? '✓ Added!' : '🛒 Add to Cart'}
+          {isAdding ? (
+            <><i className="fas fa-check"></i> Added!</>
+          ) : (
+            <><i className="fas fa-cart-plus"></i> Add to Cart</>
+          )}
         </button>
       </div>
     </div>

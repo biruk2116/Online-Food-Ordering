@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -10,24 +10,73 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import AdminDashboard from './pages/AdminDashboard';
 import FoodDetails from './pages/FoodDetails';
-import About from './pages/About';
-import Contact from './pages/Contact';
+import Account from './pages/Account';
 
-// Simple Context Providers
-const AuthContext = React.createContext();
-const CartContext = React.createContext();
-const FoodContext = React.createContext();
-const OrderContext = React.createContext();
-const SettingsContext = React.createContext();
+// Contexts
+const AuthContext = createContext();
+const CartContext = createContext();
+const FoodContext = createContext();
+const OrderContext = createContext();
+const SettingsContext = createContext();
 
 // Initial Data
 const initialFoods = [
-  { id: 1, name: "Spicy Burger", price: 12.99, category: "Burger", rating: 4.5, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&h=200&fit=crop", shortDescription: "Juicy beef patty with spicy sauce", description: "Our signature spicy burger features a juicy beef patty topped with pepper jack cheese.", calories: 850, carbs: 65, protein: 35, fats: 42 },
-  { id: 2, name: "Ethiopian Coffee", price: 3.99, category: "Beverage", rating: 4.8, image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300&h=200&fit=crop", shortDescription: "Authentic Ethiopian coffee", description: "Traditional Ethiopian coffee made from high-quality Arabica beans.", calories: 5, carbs: 1, protein: 0, fats: 0 },
-  { id: 3, name: "Doro Wat", price: 15.99, category: "Ethiopian", rating: 4.9, image: "https://images.unsplash.com/photo-1585937421614-70a008356fbe?w=300&h=200&fit=crop", shortDescription: "Spicy chicken stew with egg", description: "Ethiopia's most famous dish - tender chicken simmered in spicy sauce.", calories: 650, carbs: 45, protein: 42, fats: 38 },
-  { id: 4, name: "Kitfo", price: 14.99, category: "Ethiopian", rating: 4.7, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop", shortDescription: "Minced raw beef with spices", description: "Premium quality minced beef seasoned with mitmita.", calories: 550, carbs: 15, protein: 48, fats: 35 },
-  { id: 5, name: "Shiro Wat", price: 10.99, category: "Ethiopian", rating: 4.6, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop", shortDescription: "Chickpea stew", description: "A comforting stew made from ground chickpeas.", calories: 380, carbs: 55, protein: 18, fats: 12 },
-  { id: 6, name: "Tej", price: 5.99, category: "Beverage", rating: 4.4, image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=300&h=200&fit=crop", shortDescription: "Honey wine", description: "Traditional Ethiopian honey wine.", calories: 180, carbs: 25, protein: 0, fats: 0 }
+  { 
+    id: 1, name: "Spicy Burger", price: 12.99, category: "Burger", rating: 4.5, 
+    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop", 
+    shortDescription: "Juicy beef patty with spicy sauce", 
+    description: "Our signature spicy burger features a juicy beef patty topped with pepper jack cheese, crispy lettuce, tomatoes, onions, and our secret spicy sauce. Served with crispy fries.",
+    nutrition: { calories: 850, carbs: 65, protein: 35, fats: 42 }
+  },
+  { 
+    id: 2, name: "Ethiopian Coffee", price: 3.99, category: "Beverage", rating: 4.8, 
+    image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop",
+    shortDescription: "Authentic Ethiopian coffee",
+    description: "Traditional Ethiopian coffee made from high-quality Arabica beans, roasted and brewed fresh. Served with popcorn.",
+    nutrition: { calories: 5, carbs: 1, protein: 0, fats: 0 }
+  },
+  { 
+    id: 3, name: "Doro Wat", price: 15.99, category: "Ethiopian", rating: 4.9, 
+    image: "https://images.unsplash.com/photo-1585937421614-70a008356fbe?w=400&h=300&fit=crop",
+    shortDescription: "Spicy chicken stew with egg",
+    description: "Ethiopia's most famous dish - tender chicken simmered in a spicy berbere sauce with onions, garlic, ginger, and a hard-boiled egg.",
+    nutrition: { calories: 650, carbs: 45, protein: 42, fats: 38 }
+  },
+  { 
+    id: 4, name: "Kitfo", price: 14.99, category: "Ethiopian", rating: 4.7, 
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
+    shortDescription: "Minced raw beef with spices",
+    description: "Premium quality minced beef seasoned with mitmita and kibe (spiced butter). Served with ayib and gomen.",
+    nutrition: { calories: 550, carbs: 15, protein: 48, fats: 35 }
+  },
+  { 
+    id: 5, name: "Shiro Wat", price: 10.99, category: "Ethiopian", rating: 4.6, 
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
+    shortDescription: "Chickpea stew",
+    description: "A comforting stew made from ground chickpeas and broad beans, simmered with onions, garlic, and berbere sauce.",
+    nutrition: { calories: 380, carbs: 55, protein: 18, fats: 12 }
+  },
+  { 
+    id: 6, name: "Tej", price: 5.99, category: "Beverage", rating: 4.4, 
+    image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=300&fit=crop",
+    shortDescription: "Honey wine",
+    description: "Traditional Ethiopian honey wine, slightly sweet with a hint of bitterness.",
+    nutrition: { calories: 180, carbs: 25, protein: 0, fats: 0 }
+  },
+  { 
+    id: 7, name: "Cheese Burger", price: 11.99, category: "Burger", rating: 4.3, 
+    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
+    shortDescription: "Classic cheeseburger",
+    description: "Classic cheeseburger with melted cheddar cheese, lettuce, tomato, onion, pickles, and special sauce.",
+    nutrition: { calories: 780, carbs: 58, protein: 32, fats: 45 }
+  },
+  { 
+    id: 8, name: "Double Burger", price: 15.99, category: "Burger", rating: 4.6, 
+    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
+    shortDescription: "Double patty burger",
+    description: "Two juicy beef patties stacked with double cheese, bacon, lettuce, tomato, and our signature sauce.",
+    nutrition: { calories: 1050, carbs: 72, protein: 52, fats: 58 }
+  }
 ];
 
 const initialCategories = [
@@ -42,24 +91,51 @@ function App() {
   const [user, setUser] = useState(null);
   const [cartItems, setCartItems] = useState([]);
   const [foods, setFoods] = useState(initialFoods);
-  const [categories] = useState(initialCategories);
+  const [categories, setCategories] = useState(initialCategories);
   const [orders, setOrders] = useState([]);
   const [notification, setNotification] = useState(null);
 
+  // Load data from localStorage
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
-    if (savedUser) setUser(JSON.parse(savedUser));
     const savedCart = localStorage.getItem('cart');
-    if (savedCart) setCartItems(JSON.parse(savedCart));
     const savedOrders = localStorage.getItem('orders');
+    const savedFoods = localStorage.getItem('foods');
+    const savedCategories = localStorage.getItem('categories');
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedUser) setUser(JSON.parse(savedUser));
+    if (savedCart) setCartItems(JSON.parse(savedCart));
     if (savedOrders) setOrders(JSON.parse(savedOrders));
+    if (savedFoods) setFoods(JSON.parse(savedFoods));
+    if (savedCategories) setCategories(JSON.parse(savedCategories));
+    if (savedTheme === 'dark') setIsDark(true);
   }, []);
+
+  // Save data to localStorage
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  useEffect(() => {
+    localStorage.setItem('orders', JSON.stringify(orders));
+  }, [orders]);
+
+  useEffect(() => {
+    localStorage.setItem('foods', JSON.stringify(foods));
+  }, [foods]);
+
+  useEffect(() => {
+    localStorage.setItem('categories', JSON.stringify(categories));
+  }, [categories]);
 
   useEffect(() => {
     if (isDark) {
       document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.body.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'light');
     }
   }, [isDark]);
 
@@ -78,7 +154,7 @@ function App() {
       showNotification(`Welcome back, ${userData.name}!`);
       return true;
     }
-    showNotification('Invalid credentials', 'error');
+    showNotification('Invalid email or password', 'error');
     return false;
   };
 
@@ -88,7 +164,7 @@ function App() {
       showNotification('Email already exists', 'error');
       return false;
     }
-    const newUser = { id: Date.now(), name, email, password, role: 'user' };
+    const newUser = { id: Date.now(), name, email, password, role: 'user', createdAt: new Date().toISOString() };
     users.push(newUser);
     localStorage.setItem('users', JSON.stringify(users));
     const { password: _, ...userData } = newUser;
@@ -101,12 +177,12 @@ function App() {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
-    showNotification('Logged out', 'info');
+    showNotification('Logged out successfully', 'info');
   };
 
   const addToCart = (food, quantity = 1) => {
     if (!user) {
-      showNotification('Please login first!', 'error');
+      showNotification('Please login first to add items to cart!', 'error');
       return false;
     }
     setCartItems(prev => {
@@ -130,31 +206,67 @@ function App() {
 
   const removeFromCart = (id) => {
     setCartItems(prev => prev.filter(i => i.id !== id));
-    showNotification('Item removed', 'info');
+    showNotification('Item removed from cart', 'info');
   };
 
   const getTotalPrice = () => cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const getItemCount = () => cartItems.reduce((sum, i) => sum + i.quantity, 0);
 
   const placeOrder = (orderData) => {
-    const newOrder = { id: Date.now(), ...orderData, userId: user?.id, userName: user?.name, date: new Date().toISOString(), status: 'Pending' };
+    const newOrder = {
+      id: Date.now(),
+      orderNumber: `ORD-${Date.now()}`,
+      ...orderData,
+      userId: user?.id,
+      userName: user?.name,
+      userEmail: user?.email,
+      date: new Date().toISOString(),
+      status: 'Pending',
+      deliveryStatus: 'Processing'
+    };
     const updated = [newOrder, ...orders];
     setOrders(updated);
-    localStorage.setItem('orders', JSON.stringify(updated));
     setCartItems([]);
-    localStorage.setItem('cart', JSON.stringify([]));
     showNotification('Order placed successfully!');
     return newOrder;
   };
 
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cartItems));
-  }, [cartItems]);
+  const addFood = (food) => {
+    const newFood = { ...food, id: Date.now(), rating: 4.5 };
+    setFoods(prev => [...prev, newFood]);
+    showNotification('Food added successfully!');
+  };
+
+  const updateFood = (id, updatedFood) => {
+    setFoods(prev => prev.map(f => f.id === id ? { ...f, ...updatedFood } : f));
+    showNotification('Food updated successfully!');
+  };
+
+  const deleteFood = (id) => {
+    setFoods(prev => prev.filter(f => f.id !== id));
+    showNotification('Food deleted successfully!');
+  };
+
+  const addCategory = (category) => {
+    const newCategory = { ...category, id: Date.now() };
+    setCategories(prev => [...prev, newCategory]);
+    showNotification('Category added successfully!');
+  };
+
+  const updateCategory = (id, updatedCategory) => {
+    setCategories(prev => prev.map(c => c.id === id ? { ...c, ...updatedCategory } : c));
+    showNotification('Category updated successfully!');
+  };
+
+  const deleteCategory = (id) => {
+    setCategories(prev => prev.filter(c => c.id !== id));
+    showNotification('Category deleted successfully!');
+  };
 
   const authValue = { user, login, signup, logout };
   const cartValue = { cartItems, addToCart, updateQuantity, removeFromCart, getTotalPrice, getItemCount };
-  const foodValue = { foods, categories };
-  const orderValue = { orders, placeOrder, getUserOrders: () => orders.filter(o => o.userId === user?.id) };
+  const foodValue = { foods, categories, addFood, updateFood, deleteFood, addCategory, updateCategory, deleteCategory };
+  const orderValue = { orders, placeOrder, getUserOrders: () => orders.filter(o => o.userId === user?.id), getAllOrders: () => orders };
   const settingsValue = { isDark, setIsDark };
 
   return (
@@ -164,7 +276,7 @@ function App() {
           <FoodContext.Provider value={foodValue}>
             <OrderContext.Provider value={orderValue}>
               <Router>
-                <div style={{ minHeight: '100vh', backgroundColor: isDark ? '#111827' : '#f9fafb' }}>
+                <div style={{ minHeight: '100vh', background: isDark ? '#0f172a' : '#f8fafc' }}>
                   <Navbar />
                   <Routes>
                     <Route path="/" element={<Home />} />
@@ -176,12 +288,16 @@ function App() {
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/food/:id" element={<FoodDetails />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/account" element={<Account />} />
                   </Routes>
+                  
+                  {/* Notification Toast */}
                   {notification && (
-                    <div style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 1000 }}>
-                      <div style={{ padding: '12px 24px', borderRadius: 8, backgroundColor: notification.type === 'error' ? '#ef4444' : '#10b981', color: 'white', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+                    <div className="fixed bottom-4 right-4 z-50 animate-fadeInUp">
+                      <div className={`px-6 py-3 rounded-lg shadow-lg text-white ${
+                        notification.type === 'error' ? 'bg-red-500' : 
+                        notification.type === 'info' ? 'bg-blue-500' : 'bg-green-500'
+                      }`}>
                         {notification.message}
                       </div>
                     </div>
@@ -196,11 +312,11 @@ function App() {
   );
 }
 
-// Hooks
-export const useAuth = () => React.useContext(AuthContext);
-export const useCart = () => React.useContext(CartContext);
-export const useFood = () => React.useContext(FoodContext);
-export const useOrders = () => React.useContext(OrderContext);
-export const useSettings = () => React.useContext(SettingsContext);
+// Custom Hooks
+export const useAuth = () => useContext(AuthContext);
+export const useCart = () => useContext(CartContext);
+export const useFood = () => useContext(FoodContext);
+export const useOrders = () => useContext(OrderContext);
+export const useSettings = () => useContext(SettingsContext);
 
 export default App;
