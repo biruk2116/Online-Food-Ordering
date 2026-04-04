@@ -30,23 +30,42 @@ const Navbar = () => {
     <>
       <nav className="fixed top-0 w-full z-50 bg-white dark:bg-gray-900 shadow-lg">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          {/* Logo - Left Corner */}
           <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent hover:scale-105 transition-transform">
-            FoodieDash
+            🍔 FoodieDash
           </Link>
           
+          {/* Middle Space - Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">Home</Link>
-            <Link to="/menu" className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">Menu</Link>
-            <button onClick={() => scrollToSection('about-section')} className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">About</button>
-            <button onClick={() => scrollToSection('contact-section')} className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">Contact</button>
+            <button onClick={() => scrollToSection('hero')} className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition font-medium">
+              Home
+            </button>
+            <button onClick={() => scrollToSection('menu-section')} className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition font-medium">
+              Menu
+            </button>
+            <button onClick={() => scrollToSection('about-section')} className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition font-medium">
+              About
+            </button>
+            <button onClick={() => scrollToSection('contact-section')} className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition font-medium">
+              Contact
+            </button>
           </div>
           
+          {/* Right Corner - Icons and User Menu */}
           <div className="flex items-center space-x-4">
-            <button onClick={() => setIsDark(!isDark)} className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:scale-110 transition-transform">
-              {isDark ? '☀️' : '🌙'}
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setIsDark(!isDark)}
+              className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:scale-110 transition-transform"
+            >
+              {isDark ? <i className="fas fa-sun text-yellow-500"></i> : <i className="fas fa-moon text-gray-700"></i>}
             </button>
             
-            <button onClick={() => setShowCartPanel(true)} className="relative p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:scale-110 transition-transform">
+            {/* Cart Icon */}
+            <button 
+              onClick={() => setShowCartPanel(true)}
+              className="relative p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:scale-110 transition-transform"
+            >
               <i className="fas fa-shopping-cart text-gray-700 dark:text-gray-200"></i>
               {getItemCount() > 0 && (
                 <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -55,9 +74,14 @@ const Navbar = () => {
               )}
             </button>
             
+            {/* User Profile - Hover Dropdown */}
             {user ? (
-              <div className="relative" onMouseEnter={() => setShowUserMenu(true)} onMouseLeave={() => setShowUserMenu(false)}>
-                <button className="flex items-center space-x-2 p-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white hover:scale-105 transition-transform">
+              <div 
+                className="relative"
+                onMouseEnter={() => setShowUserMenu(true)}
+                onMouseLeave={() => setShowUserMenu(false)}
+              >
+                <button className="flex items-center space-x-2 px-3 py-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white hover:scale-105 transition-transform">
                   <i className="fas fa-user"></i>
                   <span className="hidden md:inline">{user.name.split(' ')[0]}</span>
                   <i className="fas fa-chevron-down text-xs"></i>
@@ -65,6 +89,10 @@ const Navbar = () => {
                 
                 {showUserMenu && (
                   <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-2 animate-scaleIn">
+                    <div className="px-4 py-3 border-b dark:border-gray-700">
+                      <p className="text-sm font-semibold dark:text-white">{user.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                    </div>
                     <Link to="/account" className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                       <i className="fas fa-user-circle mr-2"></i> My Account
                     </Link>
@@ -120,9 +148,9 @@ const Navbar = () => {
                           <h3 className="font-semibold dark:text-white">{item.name}</h3>
                           <p className="text-orange-500 font-bold">${item.price}</p>
                           <div className="flex items-center gap-2 mt-2">
-                            <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 transition">-</button>
+                            <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 transition">-</button>
                             <span className="w-8 text-center dark:text-white">{item.quantity}</span>
-                            <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 transition">+</button>
+                            <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 transition">+</button>
                             <button onClick={() => removeFromCart(item.id)} className="ml-2 text-red-500 hover:text-red-600"><i className="fas fa-trash"></i></button>
                           </div>
                         </div>
@@ -139,7 +167,7 @@ const Navbar = () => {
                     <span className="text-orange-500">${getTotalPrice().toFixed(2)}</span>
                   </div>
                   <Link to="/checkout" onClick={() => setShowCartPanel(false)}>
-                    <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold hover:scale-105 transition-transform">
+                    <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold hover:scale-105 transition">
                       Proceed to Checkout
                     </button>
                   </Link>

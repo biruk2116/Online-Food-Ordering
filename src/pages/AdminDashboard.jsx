@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth, useFood, useOrders } from '../App';
 
 const AdminDashboard = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const { foods, categories, addFood, updateFood, deleteFood, addCategory, updateCategory, deleteCategory } = useFood();
   const { getAllOrders, updateOrderStatus } = useOrders();
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -12,6 +13,8 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
   const [categoryImagePreview, setCategoryImagePreview] = useState(null);
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [adminCredentials, setAdminCredentials] = useState({ currentPassword: '', newEmail: '', newName: '' });
   const fileInputRef = useRef(null);
   const categoryFileInputRef = useRef(null);
   
@@ -24,10 +27,16 @@ const AdminDashboard = () => {
   useEffect(() => {
     const savedUsers = JSON.parse(localStorage.getItem('users') || '[]');
     setUsers(savedUsers);
-  }, []);
+    if (user) {
+      setAdminCredentials({ currentPassword: '', newEmail: user.email, newName: user.name });
+    }
+  }, [user]);
 
+  // Security Check - Only admin can access
   if (!user) return <Navigate to="/login" />;
-  if (user.email !== 'admin@foodie.com' && user.role !== 'admin') return <Navigate to="/" />;
+  if (user.email !== 'admin@foodie.com' && user.role !== 'admin') {
+    return <Navigate to="/" />;
+  }
 
   const stats = {
     totalFoods: foods.length,
@@ -42,9 +51,8 @@ const AdminDashboard = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const imageUrl = reader.result;
-        setImagePreview(imageUrl);
-        setFoodForm({ ...foodForm, image: imageUrl });
+        setImagePreview(reader.result);
+        setFoodForm({ ...foodForm, image: reader.result });
       };
       reader.readAsDataURL(file);
     }
@@ -55,9 +63,8 @@ const AdminDashboard = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const imageUrl = reader.result;
-        setCategoryImagePreview(imageUrl);
-        setCategoryForm({ ...categoryForm, image: imageUrl });
+        setCategoryImagePreview(reader.result);
+        setCategoryForm({ ...categoryForm, image: reader.result });
       };
       reader.readAsDataURL(file);
     }
@@ -100,16 +107,23 @@ const AdminDashboard = () => {
     if (categoryFileInputRef.current) categoryFileInputRef.current.value = '';
   };
 
-  const handleEditFood = (food) => {
-    setEditingFood(food);
-    setFoodForm(food);
-    setImagePreview(food.image);
-  };
-
-  const handleEditCategory = (category) => {
-    setEditingCategory(category);
-    setCategoryForm({ name: category.name, image: category.image });
-    setCategoryImagePreview(category.image);
+  const handleUpdateAdminProfile = () => {
+    const usersList = JSON.parse(localStorage.getItem('users') || '[]');
+    const adminIndex = usersList.findIndex(u => u.id === user.id);
+    if (adminIndex !== -1) {
+      usersList[adminIndex].name = adminCredentials.newName;
+      usersList[adminIndex].email = adminCredentials.newEmail;
+      localStorage.setItem('users', JSON.stringify(usersList));
+      
+      // Update current session
+      const updatedUser = { ...user, name: adminCredentials.newName, email: adminCredentials.newEmail };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      alert('Profile updated successfully! Please login again.');
+      logout();
+      navigate('/login');
+    }
+    setShowSecurityModal(false);
   };
 
   const handleUpdateOrderStatus = (orderId, currentStatus) => {
@@ -133,10 +147,27 @@ const AdminDashboard = () => {
     <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900 mt-16">
       {/* Sidebar */}
       <aside className="w-64 bg-white dark:bg-gray-800 shadow-xl fixed h-full overflow-y-auto">
-        <div className="p-6 border-b dark:border-gray-700">
-          <h2 className="text-2xl font-bold gradient-text">Admin Panel</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Welcome, {user.name}</p>
+        <div className="p-6 border-b dark:border-gray-700 bg-gradient-to-r from-orange-500 to-red-500">
+          <h2 className="text-2xl font-bold text-white">Admin Panel</h2>
+          <p className="text-sm text-white opacity-90 mt-1">Welcome back, {user.name}</p>
         </div>
+        
+        {/* Admin Profile Section */}
+        <div className="p-4 border-b dark:border-gray-700">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold dark:text-white text-sm">{user.name}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+            </div>
+            <button onClick={() => setShowSecurityModal(true)} className="text-gray-500 hover:text-orange-500">
+              <i className="fas fa-edit"></i>
+            </button>
+          </div>
+        </div>
+        
         <nav className="p-4 space-y-2">
           {[
             { id: 'dashboard', label: 'Dashboard', icon: '📊' },
@@ -155,6 +186,9 @@ const AdminDashboard = () => {
           <button onClick={exportData} className="w-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-2 rounded-lg hover:bg-gray-300 transition">
             <i className="fas fa-download mr-2"></i> Export Data
           </button>
+          <button onClick={logout} className="w-full mt-2 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition">
+            <i className="fas fa-sign-out-alt mr-2"></i> Logout
+          </button>
         </div>
       </aside>
 
@@ -171,7 +205,7 @@ const AdminDashboard = () => {
                 { title: 'Total Users', value: stats.totalUsers, icon: '👥', color: 'from-purple-500 to-pink-500' },
                 { title: 'Revenue', value: `$${stats.totalRevenue.toFixed(2)}`, icon: '💰', color: 'from-yellow-500 to-orange-500' }
               ].map(stat => (
-                <div key={stat.title} className={`bg-gradient-to-r ${stat.color} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300`}>
+                <div key={stat.title} className={`bg-gradient-to-r ${stat.color} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer`}>
                   <div className="flex justify-between items-start">
                     <div><p className="text-sm opacity-90">{stat.title}</p><p className="text-2xl font-bold mt-2">{stat.value}</p></div>
                     <span className="text-3xl">{stat.icon}</span>
@@ -189,30 +223,25 @@ const AdminDashboard = () => {
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                 <h2 className="text-xl font-bold mb-4 dark:text-white">{editingFood ? 'Edit Food' : 'Add New Food'}</h2>
                 <form onSubmit={handleFoodSubmit} className="space-y-4">
-                  <input type="text" placeholder="Food Name" value={foodForm.name} onChange={e => setFoodForm({...foodForm, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
-                  <input type="number" step="0.01" placeholder="Price" value={foodForm.price} onChange={e => setFoodForm({...foodForm, price: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
-                  <select value={foodForm.category} onChange={e => setFoodForm({...foodForm, category: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  <input type="text" placeholder="Food Name" value={foodForm.name} onChange={e => setFoodForm({...foodForm, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  <input type="number" step="0.01" placeholder="Price" value={foodForm.price} onChange={e => setFoodForm({...foodForm, price: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  <select value={foodForm.category} onChange={e => setFoodForm({...foodForm, category: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700">
                     <option>Burger</option><option>Ethiopian</option><option>Beverage</option>
                   </select>
-                  <input type="text" placeholder="Short Description" value={foodForm.shortDescription} onChange={e => setFoodForm({...foodForm, shortDescription: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
-                  <textarea placeholder="Full Description" rows="2" value={foodForm.description} onChange={e => setFoodForm({...foodForm, description: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
+                  <input type="text" placeholder="Short Description" value={foodForm.shortDescription} onChange={e => setFoodForm({...foodForm, shortDescription: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+                  <textarea placeholder="Full Description" rows="2" value={foodForm.description} onChange={e => setFoodForm({...foodForm, description: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
                   
-                  {/* Image Upload */}
                   <div>
                     <label className="block text-sm font-medium mb-2 dark:text-white">Food Image</label>
-                    <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-                    {imagePreview && (
-                      <div className="mt-2">
-                        <img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded-lg" />
-                      </div>
-                    )}
+                    <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" />
+                    {imagePreview && <img src={imagePreview} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-lg" />}
                   </div>
                   
                   <div className="grid grid-cols-2 gap-3">
-                    <input type="number" placeholder="Calories" value={foodForm.nutrition.calories} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, calories: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-                    <input type="number" placeholder="Carbs (g)" value={foodForm.nutrition.carbs} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, carbs: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-                    <input type="number" placeholder="Protein (g)" value={foodForm.nutrition.protein} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, protein: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-                    <input type="number" placeholder="Fats (g)" value={foodForm.nutrition.fats} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, fats: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                    <input type="number" placeholder="Calories" value={foodForm.nutrition.calories} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, calories: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700" />
+                    <input type="number" placeholder="Carbs (g)" value={foodForm.nutrition.carbs} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, carbs: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700" />
+                    <input type="number" placeholder="Protein (g)" value={foodForm.nutrition.protein} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, protein: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700" />
+                    <input type="number" placeholder="Fats (g)" value={foodForm.nutrition.fats} onChange={e => setFoodForm({...foodForm, nutrition: {...foodForm.nutrition, fats: e.target.value}})} className="px-4 py-2 border rounded-lg dark:bg-gray-700" />
                   </div>
                   
                   <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg font-semibold hover:scale-105 transition">{editingFood ? 'Update' : 'Add'} Food</button>
@@ -222,20 +251,13 @@ const AdminDashboard = () => {
               <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 overflow-x-auto">
                 <h2 className="text-xl font-bold mb-4 dark:text-white">Food List</h2>
                 <table className="w-full">
-                  <thead className="bg-gray-100 dark:bg-gray-700">
-                    <tr><th className="p-3 text-left">Image</th><th>Name</th><th>Price</th><th>Category</th><th>Actions</th></tr>
-                  </thead>
+                  <thead className="bg-gray-100 dark:bg-gray-700"><tr><th className="p-3">Image</th><th>Name</th><th>Price</th><th>Category</th><th>Actions</th></tr></thead>
                   <tbody>
                     {foods.map(food => (
                       <tr key={food.id} className="border-b dark:border-gray-700">
                         <td className="p-3"><img src={food.image} alt={food.name} className="w-12 h-12 object-cover rounded" /></td>
-                        <td className="p-3 dark:text-white">{food.name}</td>
-                        <td className="p-3 dark:text-white">${food.price}</td>
-                        <td className="p-3 dark:text-white">{food.category}</td>
-                        <td className="p-3 space-x-2">
-                          <button onClick={() => handleEditFood(food)} className="text-blue-500 hover:scale-110 transition">✏️</button>
-                          <button onClick={() => deleteFood(food.id)} className="text-red-500 hover:scale-110 transition">🗑️</button>
-                        </td>
+                        <td className="p-3 dark:text-white">{food.name}</td><td className="p-3 dark:text-white">${food.price}</td><td className="p-3 dark:text-white">{food.category}</td>
+                        <td className="p-3 space-x-2"><button onClick={() => { setEditingFood(food); setFoodForm(food); setImagePreview(food.image); }} className="text-blue-500 hover:scale-110 transition">✏️</button><button onClick={() => deleteFood(food.id)} className="text-red-500 hover:scale-110 transition">🗑️</button></td>
                       </tr>
                     ))}
                   </tbody>
@@ -252,19 +274,12 @@ const AdminDashboard = () => {
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                 <h2 className="text-xl font-bold mb-4 dark:text-white">{editingCategory ? 'Edit Category' : 'Add New Category'}</h2>
                 <form onSubmit={handleCategorySubmit} className="space-y-4">
-                  <input type="text" placeholder="Category Name" value={categoryForm.name} onChange={e => setCategoryForm({...categoryForm, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required />
-                  
-                  {/* Category Image Upload */}
+                  <input type="text" placeholder="Category Name" value={categoryForm.name} onChange={e => setCategoryForm({...categoryForm, name: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
                   <div>
                     <label className="block text-sm font-medium mb-2 dark:text-white">Category Image</label>
-                    <input type="file" ref={categoryFileInputRef} onChange={handleCategoryImageUpload} accept="image/*" className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-                    {categoryImagePreview && (
-                      <div className="mt-2">
-                        <img src={categoryImagePreview} alt="Category Preview" className="w-32 h-32 object-cover rounded-lg" />
-                      </div>
-                    )}
+                    <input type="file" ref={categoryFileInputRef} onChange={handleCategoryImageUpload} accept="image/*" className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" />
+                    {categoryImagePreview && <img src={categoryImagePreview} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-lg" />}
                   </div>
-                  
                   <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg font-semibold hover:scale-105 transition">{editingCategory ? 'Update' : 'Add'} Category</button>
                   {editingCategory && (<button type="button" onClick={() => { setEditingCategory(null); setCategoryForm({ name: '', image: '' }); setCategoryImagePreview(null); }} className="w-full text-gray-500 text-sm mt-2">Cancel Edit</button>)}
                 </form>
@@ -276,7 +291,7 @@ const AdminDashboard = () => {
                     <div key={cat.id} className="flex items-center gap-4 p-3 border rounded-lg dark:border-gray-700">
                       <img src={cat.image} alt={cat.name} className="w-12 h-12 object-contain" />
                       <div className="flex-1 font-semibold dark:text-white">{cat.name}</div>
-                      <button onClick={() => handleEditCategory(cat)} className="text-blue-500 hover:scale-110 transition">✏️</button>
+                      <button onClick={() => { setEditingCategory(cat); setCategoryForm({ name: cat.name, image: cat.image }); setCategoryImagePreview(cat.image); }} className="text-blue-500 hover:scale-110 transition">✏️</button>
                       <button onClick={() => deleteCategory(cat.id)} className="text-red-500 hover:scale-110 transition">🗑️</button>
                     </div>
                   ))}
@@ -291,15 +306,11 @@ const AdminDashboard = () => {
             <h1 className="text-3xl font-bold mb-8 dark:text-white">Order Management</h1>
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-x-auto p-6">
               <table className="w-full">
-                <thead className="bg-gray-100 dark:bg-gray-700">
-                  <tr><th className="p-3 text-left">Order #</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr>
-                </thead>
+                <thead className="bg-gray-100 dark:bg-gray-700"><tr><th className="p-3">Order #</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
                 <tbody>
                   {getAllOrders().map(order => (
                     <tr key={order.id} className="border-b dark:border-gray-700">
-                      <td className="p-3 dark:text-white">{order.orderNumber}</td>
-                      <td className="p-3 dark:text-white">{order.userName}</td>
-                      <td className="p-3 dark:text-white">${order.total?.toFixed(2)}</td>
+                      <td className="p-3 dark:text-white">{order.orderNumber}</td><td className="p-3 dark:text-white">{order.userName}</td><td className="p-3 dark:text-white">${order.total?.toFixed(2)}</td>
                       <td className="p-3 dark:text-white">{order.paymentMethod || 'Cash'}</td>
                       <td className="p-3"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : order.status === 'Processing' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>{order.status}</span></td>
                       <td className="p-3 dark:text-white">{new Date(order.date).toLocaleDateString()}</td>
@@ -317,17 +328,13 @@ const AdminDashboard = () => {
             <h1 className="text-3xl font-bold mb-8 dark:text-white">User Management</h1>
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-x-auto p-6">
               <table className="w-full">
-                <thead className="bg-gray-100 dark:bg-gray-700">
-                  <tr><th className="p-3 text-left">ID</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr>
-                </thead>
+                <thead className="bg-gray-100 dark:bg-gray-700"><tr><th className="p-3">ID</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
                 <tbody>
-                  {users.map(user => (
-                    <tr key={user.id} className="border-b dark:border-gray-700">
-                      <td className="p-3 dark:text-white">#{user.id}</td>
-                      <td className="p-3 dark:text-white">{user.name}</td>
-                      <td className="p-3 dark:text-white">{user.email}</td>
-                      <td className="p-3"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>{user.role || 'user'}</span></td>
-                      <td className="p-3 dark:text-white">{new Date(user.createdAt).toLocaleDateString()}</td>
+                  {users.map(u => (
+                    <tr key={u.id} className="border-b dark:border-gray-700">
+                      <td className="p-3 dark:text-white">#{u.id}</td><td className="p-3 dark:text-white">{u.name}</td><td className="p-3 dark:text-white">{u.email}</td>
+                      <td className="p-3"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${u.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>{u.role || 'user'}</span></td>
+                      <td className="p-3 dark:text-white">{new Date(u.createdAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -336,6 +343,35 @@ const AdminDashboard = () => {
           </div>
         )}
       </main>
+
+      {/* Security Modal for Admin Profile Update */}
+      {showSecurityModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4 animate-scaleIn">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold dark:text-white">Update Admin Profile</h2>
+              <button onClick={() => setShowSecurityModal(false)} className="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <form onSubmit={(e) => { e.preventDefault(); handleUpdateAdminProfile(); }} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 dark:text-white">Full Name</label>
+                <input type="text" value={adminCredentials.newName} onChange={e => setAdminCredentials({...adminCredentials, newName: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2 dark:text-white">Email Address</label>
+                <input type="email" value={adminCredentials.newEmail} onChange={e => setAdminCredentials({...adminCredentials, newEmail: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2 dark:text-white">Current Password (for verification)</label>
+                <input type="password" placeholder="Enter your password" value={adminCredentials.currentPassword} onChange={e => setAdminCredentials({...adminCredentials, currentPassword: e.target.value})} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700" required />
+              </div>
+              <button type="submit" className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg font-semibold hover:scale-105 transition">
+                Update Profile
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
