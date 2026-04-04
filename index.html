@@ -16,11 +16,20 @@
         font-family: 'Inter', sans-serif;
       }
       
-      /* Dark Mode Styles - Applied Globally */
-      body.dark-mode {
-        background-color: #0f172a !important;
+      /* Light Mode (Default) */
+      body {
+        background-color: #f8fafc;
+        color: #1e293b;
+        transition: all 0.3s ease;
       }
       
+      /* Dark Mode Styles */
+      body.dark-mode {
+        background-color: #0f172a !important;
+        color: #f1f5f9 !important;
+      }
+      
+      /* Background Colors */
       body.dark-mode .bg-white {
         background-color: #1e293b !important;
       }
@@ -30,6 +39,19 @@
         background-color: #0f172a !important;
       }
       
+      body.dark-mode .bg-gray-200 {
+        background-color: #334155 !important;
+      }
+      
+      body.dark-mode .bg-gray-800 {
+        background-color: #1e293b !important;
+      }
+      
+      body.dark-mode .bg-gray-900 {
+        background-color: #0f172a !important;
+      }
+      
+      /* Text Colors */
       body.dark-mode .text-gray-800,
       body.dark-mode .text-gray-900,
       body.dark-mode .text-gray-700 {
@@ -41,17 +63,67 @@
         color: #cbd5e1 !important;
       }
       
+      body.dark-mode .text-gray-400 {
+        color: #94a3b8 !important;
+      }
+      
+      /* Border Colors */
       body.dark-mode .border-gray-200,
       body.dark-mode .border-gray-300 {
         border-color: #334155 !important;
       }
       
-      body.dark-mode .bg-gray-200 {
+      body.dark-mode .border-gray-100 {
+        border-color: #1e293b !important;
+      }
+      
+      /* Card Styles */
+      body.dark-mode .shadow-lg,
+      body.dark-mode .shadow-xl,
+      body.dark-mode .shadow-2xl {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+      }
+      
+      /* Input Fields */
+      body.dark-mode input,
+      body.dark-mode textarea,
+      body.dark-mode select {
+        background-color: #1e293b !important;
+        border-color: #475569 !important;
+        color: #f1f5f9 !important;
+      }
+      
+      body.dark-mode input::placeholder,
+      body.dark-mode textarea::placeholder {
+        color: #94a3b8 !important;
+      }
+      
+      /* Hover Effects */
+      body.dark-mode .hover\:bg-gray-100:hover {
         background-color: #334155 !important;
       }
       
-      body.dark-mode .hover\:bg-gray-100:hover {
-        background-color: #334155 !important;
+      body.dark-mode .hover\:bg-gray-50:hover {
+        background-color: #1e293b !important;
+      }
+      
+      /* Gradient Text - Always visible */
+      .gradient-text {
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      
+      /* Button Styles */
+      .btn-primary {
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        transition: all 0.3s ease;
+      }
+      
+      .btn-primary:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3);
       }
       
       /* Animations */
@@ -88,6 +160,11 @@
         }
       }
       
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      
       .animate-fadeInUp {
         animation: fadeInUp 0.6s ease-out;
       }
@@ -100,13 +177,21 @@
         animation: slideInRight 0.6s ease-out;
       }
       
+      .animate-bounce {
+        animation: bounce 1s infinite;
+      }
+      
       /* Custom Scrollbar */
       ::-webkit-scrollbar {
         width: 10px;
       }
       
       ::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: #e2e8f0;
+      }
+      
+      body.dark-mode ::-webkit-scrollbar-track {
+        background: #1e293b;
       }
       
       ::-webkit-scrollbar-thumb {
@@ -114,9 +199,24 @@
         border-radius: 5px;
       }
       
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #ea580c, #dc2626);
+      }
+      
       /* Smooth Scroll */
       html {
         scroll-behavior: smooth;
+      }
+      
+      /* Snap Scrolling */
+      .snap-container {
+        scroll-snap-type: y mandatory;
+        overflow-y: scroll;
+        height: 100vh;
+      }
+      
+      .snap-section {
+        scroll-snap-align: start;
       }
       
       /* Hover Effects */
@@ -125,8 +225,39 @@
       }
       
       .hover-lift:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Cart Badge */
+      .cart-badge {
+        position: absolute;
+        top: -8px;
+        right: -12px;
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      /* Loading Spinner */
+      .spinner {
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top: 3px solid white;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
     </style>
   </head>

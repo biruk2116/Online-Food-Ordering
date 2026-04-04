@@ -16,6 +16,10 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  const handleAboutClick = () => {
+    navigate('/about');
+  };
+
   return (
     <>
       <nav className="fixed top-0 w-full z-50 bg-white dark:bg-gray-900 shadow-lg">
@@ -29,7 +33,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">Home</Link>
             <Link to="/menu" className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">Menu</Link>
-            <Link to="/about" className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">About</Link>
+            <button onClick={handleAboutClick} className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">About</button>
             <Link to="/contact" className="text-gray-700 dark:text-gray-200 hover:text-orange-500 transition">Contact</Link>
           </div>
           
@@ -114,7 +118,7 @@ const Navbar = () => {
               <div className="flex-1 overflow-y-auto p-4">
                 {cartItems.length === 0 ? (
                   <div className="text-center py-8">
-                    <i className="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
+                    <i className="fas fa-shopping-cart text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
                     <p className="text-gray-500 dark:text-gray-400">Your cart is empty</p>
                   </div>
                 ) : (

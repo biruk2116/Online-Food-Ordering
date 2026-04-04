@@ -1,8 +1,20 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 
 const About = () => {
+  const navigate = useNavigate();
+
+  const scrollToAboutSection = () => {
+    navigate('/');
+    setTimeout(() => {
+      const aboutSection = document.getElementById('about-section');
+      if (aboutSection) {
+        aboutSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   return (
     <>
       <div className="container mx-auto px-4 py-16 max-w-4xl mt-16">
@@ -86,11 +98,9 @@ const About = () => {
         </div>
         
         <div className="text-center mt-8">
-          <Link to="/menu">
-            <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition shadow-lg">
-              Explore Our Menu
-            </button>
-          </Link>
+          <button onClick={scrollToAboutSection} className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-full font-semibold hover:scale-105 transition shadow-lg">
+            Learn More About Us
+          </button>
         </div>
       </div>
       <Footer />
