@@ -1,6 +1,4 @@
-// src/context/AuthContext.jsx (Enhanced)
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { storage } from '../utils/localStorage';
 
 const AuthContext = createContext();
 
@@ -10,42 +8,42 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
-    const savedUser = storage.get('currentUser');
-    const savedUsers = storage.get('users', []);
-    if (savedUser) setUser(savedUser);
-    setUsers(savedUsers);
+    const savedUser = localStorage.getItem('currentUser');
+    const savedUsers = localStorage.getItem('users');
+    if (savedUser) setUser(JSON.parse(savedUser));
+    if (savedUsers) setUsers(JSON.parse(savedUsers));
+    else localStorage.setItem('users', JSON.stringify([]));
     setLoading(false);
   }, []);
 
   const showNotification = (message, type = 'success') => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 3000);
+    window.dispatchEvent(new CustomEvent('showNotification', { detail: { message, type } }));
   };
 
   const signup = (name, email, password) => {
-    const existingUser = users.find(u => u.email === email);
+    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+    const existingUser = existingUsers.find(u => u.email === email);
     if (existingUser) {
       showNotification('Email already registered!', 'error');
       return false;
     }
     
     const newUser = { id: Date.now(), name, email, password, role: 'user' };
-    const updatedUsers = [...users, newUser];
-    setUsers(updatedUsers);
-    storage.set('users', updatedUsers);
+    const updatedUsers = [...existingUsers, newUser];
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
     
     const { password: _, ...userWithoutPassword } = newUser;
     setUser(userWithoutPassword);
-    storage.set('currentUser', userWithoutPassword);
+    localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
     showNotification('Account created successfully!', 'success');
     return true;
   };
 
   const login = (email, password) => {
-    const foundUser = users.find(u => u.email === email && u.password === password);
+    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+    const foundUser = existingUsers.find(u => u.email === email && u.password === password);
     if (!foundUser) {
       showNotification('Invalid email or password!', 'error');
       return false;
@@ -53,24 +51,19 @@ export const AuthProvider = ({ children }) => {
     
     const { password: _, ...userWithoutPassword } = foundUser;
     setUser(userWithoutPassword);
-    storage.set('currentUser', userWithoutPassword);
+    localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
     showNotification(`Welcome back, ${userWithoutPassword.name}!`, 'success');
     return true;
   };
 
   const logout = () => {
     setUser(null);
-    storage.remove('currentUser');
+    localStorage.removeItem('currentUser');
     showNotification('Logged out successfully', 'info');
   };
 
-  const getAllUsers = () => users;
-
   return (
-    <AuthContext.Provider value={{ 
-      user, users, loading, login, signup, logout, 
-      getAllUsers, notification, showNotification 
-    }}>
+    <AuthContext.Provider value={{ user, users, loading, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );

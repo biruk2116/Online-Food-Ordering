@@ -1,9 +1,9 @@
-// src/components/RecommendationSection.jsx
+// src/components/RecommendationSection.jsx (Fixed)
 import React from 'react';
 import FoodCard from './FoodCard';
 
 const RecommendationSection = ({ foods }) => {
-  if (!foods.length) return null;
+  if (!foods || foods.length === 0) return null;
   
   return (
     <div className="mt-12">

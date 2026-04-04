@@ -1,7 +1,4 @@
-// src/context/CartContext.jsx (Enhanced)
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { storage } from '../utils/localStorage';
-import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
 
@@ -9,31 +6,23 @@ export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
-  const [notification, setNotification] = useState(null);
-  const { user } = useAuth();
 
   useEffect(() => {
-    if (user) {
-      const savedCart = storage.get(`cart_${user.id}`, []);
-      setCartItems(savedCart);
-    } else {
-      setCartItems([]);
-    }
-  }, [user]);
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) setCartItems(JSON.parse(savedCart));
+  }, []);
 
   useEffect(() => {
-    if (user) {
-      storage.set(`cart_${user.id}`, cartItems);
-    }
-  }, [cartItems, user]);
+    localStorage.setItem('cart', JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const showNotification = (message, type = 'success') => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 3000);
+    window.dispatchEvent(new CustomEvent('showNotification', { detail: { message, type } }));
   };
 
   const addToCart = (food, quantity = 1) => {
-    if (!user) {
+    const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) {
       showNotification('Please login first to add items to cart!', 'error');
       return false;
     }
@@ -41,11 +30,10 @@ export const CartProvider = ({ children }) => {
     setCartItems(prev => {
       const existing = prev.find(item => item.id === food.id);
       if (existing) {
-        const updated = prev.map(item =>
+        showNotification(`Added another ${food.name} to cart!`, 'success');
+        return prev.map(item =>
           item.id === food.id ? { ...item, quantity: item.quantity + quantity } : item
         );
-        showNotification(`Added another ${food.name} to cart!`, 'success');
-        return updated;
       }
       showNotification(`${food.name} added to cart!`, 'success');
       return [...prev, { ...food, quantity }];
@@ -81,7 +69,7 @@ export const CartProvider = ({ children }) => {
   return (
     <CartContext.Provider value={{
       cartItems, addToCart, updateQuantity, removeFromCart, clearCart,
-      getTotalPrice, getItemCount, notification
+      getTotalPrice, getItemCount
     }}>
       {children}
     </CartContext.Provider>

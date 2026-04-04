@@ -1,29 +1,33 @@
-// src/context/SettingsContext.jsx (Enhanced)
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { storage } from '../utils/localStorage';
 
 const SettingsContext = createContext();
 
 export const useSettings = () => useContext(SettingsContext);
 
 export const SettingsProvider = ({ children }) => {
-  const [isDark, setIsDark] = useState(() => {
-    const saved = storage.get('theme');
-    return saved === 'dark';
-  });
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    if (isDark) {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+      setIsDark(true);
       document.documentElement.classList.add('dark');
-      storage.set('theme', 'dark');
+    }
+  }, []);
+
+  const toggleDark = (value) => {
+    setIsDark(value);
+    if (value) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
-      storage.set('theme', 'light');
+      localStorage.setItem('theme', 'light');
     }
-  }, [isDark]);
+  };
 
   return (
-    <SettingsContext.Provider value={{ isDark, setIsDark }}>
+    <SettingsContext.Provider value={{ isDark, setIsDark: toggleDark }}>
       {children}
     </SettingsContext.Provider>
   );

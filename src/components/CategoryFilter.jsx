@@ -1,5 +1,5 @@
-// src/components/CategoryFilter.jsx (Enhanced - Horizontal Scrollable)
-import React, { useRef, useEffect } from 'react';
+// src/components/CategoryFilter.jsx (Fixed)
+import React, { useRef } from 'react';
 
 const CategoryFilter = ({ categories, selectedCategory, onSelectCategory }) => {
   const scrollRef = useRef(null);
@@ -10,6 +10,8 @@ const CategoryFilter = ({ categories, selectedCategory, onSelectCategory }) => {
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
+
+  if (!categories || categories.length === 0) return null;
 
   return (
     <div className="relative mb-8">

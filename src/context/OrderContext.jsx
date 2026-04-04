@@ -1,7 +1,4 @@
-// src/context/OrderContext.jsx (Enhanced)
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { storage } from '../utils/localStorage';
-import { useAuth } from './AuthContext';
 
 const OrderContext = createContext();
 
@@ -9,18 +6,20 @@ export const useOrders = () => useContext(OrderContext);
 
 export const OrderProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
-  const { user } = useAuth();
 
   useEffect(() => {
-    const allOrders = storage.get('orders', []);
-    setOrders(allOrders);
+    const savedOrders = localStorage.getItem('orders');
+    if (savedOrders) setOrders(JSON.parse(savedOrders));
   }, []);
 
   useEffect(() => {
-    storage.set('orders', orders);
+    localStorage.setItem('orders', JSON.stringify(orders));
   }, [orders]);
 
   const placeOrder = (orderDetails) => {
+    const currentUser = localStorage.getItem('currentUser');
+    const user = currentUser ? JSON.parse(currentUser) : null;
+    
     const newOrder = {
       id: Date.now(),
       ...orderDetails,
@@ -35,12 +34,12 @@ export const OrderProvider = ({ children }) => {
   };
 
   const getUserOrders = () => {
+    const currentUser = localStorage.getItem('currentUser');
+    const user = currentUser ? JSON.parse(currentUser) : null;
     return orders.filter(order => order.userId === user?.id);
   };
 
-  const getAllOrders = () => {
-    return orders;
-  };
+  const getAllOrders = () => orders;
 
   const updateOrderStatus = (id, status) => {
     const updated = orders.map(order => order.id === id ? { ...order, status } : order);
@@ -48,9 +47,7 @@ export const OrderProvider = ({ children }) => {
   };
 
   return (
-    <OrderContext.Provider value={{ 
-      orders, placeOrder, getUserOrders, getAllOrders, updateOrderStatus 
-    }}>
+    <OrderContext.Provider value={{ orders, placeOrder, getUserOrders, getAllOrders, updateOrderStatus }}>
       {children}
     </OrderContext.Provider>
   );
