@@ -42,7 +42,7 @@ const Home = () => {
 
   return (
     <div>
-      {/* Hero Section - CLEAN IMAGE, NO OVERLAY */}
+      {/* Hero Section */}
       <section 
         ref={heroRef} 
         className="hero-section relative min-h-screen flex items-center justify-center"
@@ -58,7 +58,7 @@ const Home = () => {
         ></div>
         
         <div className="hero-content relative z-10 px-4">
-          <div className="text-6xl md:text-7xl mb-4 animate-fadeIn">🍔</div>
+          <div className="text-6xl md:text-7xl mb-4 animate-float">🍔</div>
           <h1 className="text-4xl md:text-6xl font-bold mb-3 animate-fadeInUp">
             Foodie<span className="gradient-text">Dash</span>
           </h1>
@@ -234,15 +234,15 @@ const Home = () => {
       <section ref={contactRef} className={`py-16 ${isDark ? 'bg-secondary' : 'bg-secondary'}`}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-            <div className="text-4xl mb-3">📞</div>
+            <div className="text-4xl mb-3 animate-float">📞</div>
             <h2 className="text-2xl md:text-3xl font-bold mb-2">Get In <span className="gradient-text">Touch</span></h2>
             <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 mx-auto"></div>
             <p className="text-sm text-secondary mt-3">We'd love to hear from you!</p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
             {/* Contact Form - Left Side */}
-            <div className="card p-6 rounded-xl">
+            <div className="card p-6 rounded-xl animate-slideInLeft">
               <h3 className="text-lg font-semibold mb-4">Send us a Message</h3>
               <form onSubmit={handleContactSubmit} className="space-y-4">
                 <div>
@@ -281,41 +281,49 @@ const Home = () => {
                 </button>
                 {submitted && (
                   <div className="text-green-500 text-center text-sm animate-fadeInUp">
-                    <i className="fas fa-check-circle mr-1"></i> Message sent!
+                    <i className="fas fa-check-circle mr-1"></i> Message sent successfully!
                   </div>
                 )}
               </form>
             </div>
             
             {/* Contact Info + Map - Right Side */}
-            <div className="space-y-6">
+            <div className="space-y-6 animate-slideInRight">
               {/* Contact Info */}
               <div className="card p-6 rounded-xl">
                 <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
                 <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <i className="fas fa-map-marker-alt text-orange-500 mt-0.5"></i>
+                  <div className="flex items-start gap-3 group">
+                    <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <i className="fas fa-map-marker-alt text-orange-500 text-sm"></i>
+                    </div>
                     <div>
                       <p className="text-sm font-medium">Address</p>
                       <p className="text-xs text-secondary">Bole Road, Addis Ababa, Ethiopia</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <i className="fas fa-phone text-orange-500 mt-0.5"></i>
+                  <div className="flex items-start gap-3 group">
+                    <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <i className="fas fa-phone text-orange-500 text-sm"></i>
+                    </div>
                     <div>
                       <p className="text-sm font-medium">Phone</p>
                       <p className="text-xs text-secondary">+251 911 123 456</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <i className="fas fa-envelope text-orange-500 mt-0.5"></i>
+                  <div className="flex items-start gap-3 group">
+                    <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <i className="fas fa-envelope text-orange-500 text-sm"></i>
+                    </div>
                     <div>
                       <p className="text-sm font-medium">Email</p>
                       <p className="text-xs text-secondary">support@foodiedash.com</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <i className="fas fa-clock text-orange-500 mt-0.5"></i>
+                  <div className="flex items-start gap-3 group">
+                    <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <i className="fas fa-clock text-orange-500 text-sm"></i>
+                    </div>
                     <div>
                       <p className="text-sm font-medium">Support Hours</p>
                       <p className="text-xs text-secondary">24/7 Customer Support</p>
@@ -325,23 +333,23 @@ const Home = () => {
                 <div className="mt-5 pt-4 border-t border-custom">
                   <h4 className="text-sm font-semibold mb-3">Follow Us</h4>
                   <div className="flex gap-3">
-                    <a href="#" className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all">
+                    <a href="#" className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all duration-300 hover:scale-110">
                       <i className="fab fa-facebook-f text-sm"></i>
                     </a>
-                    <a href="#" className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all">
+                    <a href="#" className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all duration-300 hover:scale-110">
                       <i className="fab fa-instagram text-sm"></i>
                     </a>
-                    <a href="#" className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all">
+                    <a href="#" className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all duration-300 hover:scale-110">
                       <i className="fab fa-twitter text-sm"></i>
                     </a>
-                    <a href="#" className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all">
+                    <a href="#" className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all duration-300 hover:scale-110">
                       <i className="fab fa-telegram text-sm"></i>
                     </a>
                   </div>
                 </div>
               </div>
               
-              {/* Map */}
+              {/* Map - Clean & Responsive */}
               <div className="card p-2 rounded-xl overflow-hidden">
                 <iframe 
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.442219259055!2d38.757028!3d9.030000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b85ce4d5c2a6f%3A0x5c8b7b8c5d6e8f9!2sAddis%20Ababa%2C%20Ethiopia!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s" 

@@ -7,7 +7,6 @@ const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [focusedField, setFocusedField] = useState(null);
   const { signup } = useAuth();
   const { isDark } = useSettings();
   const navigate = useNavigate();
@@ -24,69 +23,61 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 pt-20">
-      <div className={`max-w-md w-full rounded-2xl shadow-2xl p-8 transition-all duration-300 ${
-        isDark ? 'bg-gray-800' : 'bg-white'
+      <div className={`max-w-md w-full rounded-2xl shadow-2xl p-8 transition-all duration-300 animate-fadeInUp ${
+        isDark ? 'bg-gray-800/95 backdrop-blur-sm' : 'bg-white/95 backdrop-blur-sm'
       }`}>
-        <div className="text-center mb-8">
-          <div className="text-6xl mb-4 animate-bounce">🍕</div>
-          <h2 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+        {/* Icon */}
+        <div className="text-center mb-6">
+          <div className="text-5xl mb-3 animate-bounce">🍕</div>
+          <h2 className={`text-2xl font-bold mb-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>
             Create Account
           </h2>
-          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
             Join FoodieDash today
           </p>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="input-group">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
             <input
               type="text"
-              id="name"
-              placeholder=" "
+              placeholder="Full Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              onFocus={() => setFocusedField('name')}
-              onBlur={() => setFocusedField(null)}
+              className="form-input"
               required
             />
-            <label htmlFor="name">Full Name</label>
           </div>
           
-          <div className="input-group">
+          <div>
             <input
               type="email"
-              id="email"
-              placeholder=" "
+              placeholder="Email Address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onFocus={() => setFocusedField('email')}
-              onBlur={() => setFocusedField(null)}
+              className="form-input"
               required
             />
-            <label htmlFor="email">Email Address</label>
           </div>
           
-          <div className="input-group">
+          <div>
             <input
               type="password"
-              id="password"
-              placeholder=" "
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onFocus={() => setFocusedField('password')}
-              onBlur={() => setFocusedField(null)}
+              className="form-input"
               required
             />
-            <label htmlFor="password">Password</label>
           </div>
           
           {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
+            <div className="text-red-500 text-xs text-center">{error}</div>
           )}
           
           <button
             type="submit"
-            className="w-full btn-premium py-3 text-lg font-bold"
+            className="w-full btn-primary py-3 text-base font-semibold"
           >
             <i className="fas fa-user-plus mr-2"></i>
             Sign Up
@@ -94,9 +85,9 @@ const Signup = () => {
         </form>
         
         <div className="mt-6 text-center">
-          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
             Already have an account?{' '}
-            <Link to="/login" className="text-orange-500 hover:text-orange-600 font-semibold">
+            <Link to="/login" className="text-orange-500 hover:text-orange-600 font-semibold transition">
               Login
             </Link>
           </p>
