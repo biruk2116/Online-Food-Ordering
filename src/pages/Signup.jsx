@@ -48,7 +48,6 @@ const Signup = () => {
               onFocus={() => setFocusedField('name')}
               onBlur={() => setFocusedField(null)}
               required
-              className="w-full"
             />
             <label htmlFor="name">Full Name</label>
           </div>
@@ -63,7 +62,6 @@ const Signup = () => {
               onFocus={() => setFocusedField('email')}
               onBlur={() => setFocusedField(null)}
               required
-              className="w-full"
             />
             <label htmlFor="email">Email Address</label>
           </div>
@@ -78,7 +76,6 @@ const Signup = () => {
               onFocus={() => setFocusedField('password')}
               onBlur={() => setFocusedField(null)}
               required
-              className="w-full"
             />
             <label htmlFor="password">Password</label>
           </div>
@@ -89,7 +86,7 @@ const Signup = () => {
           
           <button
             type="submit"
-            className="w-full btn-premium py-3 text-lg"
+            className="w-full btn-premium py-3 text-lg font-bold"
           >
             <i className="fas fa-user-plus mr-2"></i>
             Sign Up

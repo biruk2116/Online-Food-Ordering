@@ -50,7 +50,7 @@ const Home = () => {
 
   return (
     <div>
-      {/* Hero Section - Clear Image No Blur */}
+      {/* Hero Section - NO BLUR, NO ZOOM */}
       <section 
         ref={heroRef} 
         className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden"
@@ -62,6 +62,7 @@ const Home = () => {
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
+            transform: 'scale(1)',
           }}
         ></div>
         
@@ -72,7 +73,7 @@ const Home = () => {
             <span className="text-7xl md:text-8xl inline-block">🍔</span>
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold mb-4 heading-1 animate-fadeInUp">
+          <h1 className="text-5xl md:text-7xl font-bold mb-4 animate-fadeInUp">
             Foodie<span className="gradient-text">Dash</span>
           </h1>
           
@@ -111,7 +112,7 @@ const Home = () => {
       <section className={`py-20 ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 heading-2">Why Choose <span className="gradient-text">Us</span>?</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Why Choose <span className="gradient-text">Us</span>?</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-orange-500 to-red-500 mx-auto"></div>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -123,34 +124,34 @@ const Home = () => {
             ].map((feature, idx) => (
               <div key={feature.title} className="card-premium text-center p-6 transition-all duration-300 transform hover:-translate-y-2 animate-fadeInUp" style={{ animationDelay: `${idx * 0.1}s` }}>
                 <div className="text-5xl mb-4 animate-float">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-2 heading-3">{feature.title}</h3>
-                <p className="text-sm text-muted">{feature.desc}</p>
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{feature.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* About Us Section - Increased Font Size for "About Us" */}
+      {/* About Us Section */}
       <section ref={aboutRef} className={`py-20 ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-6xl md:text-7xl font-bold mb-4 heading-2">
+            <h2 className="text-6xl md:text-7xl font-bold mb-4">
               About <span className="gradient-text">Us</span>
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-orange-500 to-red-500 mx-auto"></div>
-            <p className="text-lg text-muted mt-4 max-w-2xl mx-auto">Discover the story behind FoodieDash</p>
+            <p className="text-lg text-gray-500 dark:text-gray-400 mt-4 max-w-2xl mx-auto">Discover the story behind FoodieDash</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-12 items-center mt-12">
             <div className="animate-fadeInLeft">
-              <h3 className="text-3xl md:text-4xl font-bold mb-6 heading-2">
+              <h3 className="text-3xl md:text-4xl font-bold mb-6">
                 Ethiopia's <span className="gradient-text">Premier</span><br />Food Delivery Platform
               </h3>
-              <p className="text-lg leading-relaxed mb-6 body-text">
+              <p className="text-lg leading-relaxed mb-6 text-gray-600 dark:text-gray-300">
                 FoodieDash is Ethiopia's premier online food delivery platform, connecting food lovers with the best restaurants in the country. Founded in 2024, we've been on a mission to make delicious food accessible to everyone, anytime, anywhere.
               </p>
-              <p className="text-lg leading-relaxed mb-8 body-text">
+              <p className="text-lg leading-relaxed mb-8 text-gray-600 dark:text-gray-300">
                 We partner with top-rated restaurants to bring you the finest culinary experiences right to your doorstep. Our commitment to quality, speed, and customer satisfaction sets us apart.
               </p>
               <div className="grid grid-cols-2 gap-4">
@@ -158,7 +159,7 @@ const Home = () => {
                   <div key={stat.label} className="card-premium text-center p-4 transition-all duration-300 hover:scale-105">
                     <div className="text-3xl mb-2">{stat.icon}</div>
                     <div className="text-2xl font-bold text-orange-500">{stat.number}</div>
-                    <div className="text-xs text-muted mt-1">{stat.label}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -179,7 +180,7 @@ const Home = () => {
       <section className={`py-20 ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 heading-2">Featured <span className="gradient-text">Dishes</span></h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Featured <span className="gradient-text">Dishes</span></h2>
             <div className="w-24 h-1 bg-gradient-to-r from-orange-500 to-red-500 mx-auto"></div>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -187,7 +188,7 @@ const Home = () => {
               <div key={food.id} className="animate-fadeInUp" style={{ animationDelay: `${idx * 0.1}s` }}>
                 <Link to={`/food/${food.id}`}>
                   <div className="group relative overflow-hidden rounded-2xl shadow-lg card-premium">
-                    <img src={food.image} alt={food.name} className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <img src={food.image} alt={food.name} className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center p-6">
                       <div className="text-white text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                         <h3 className="text-xl font-semibold">{food.name}</h3>
@@ -205,16 +206,16 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Full Menu Section with Search Bar */}
+      {/* Full Menu Section */}
       <section ref={menuRef} className={`py-20 ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 heading-2">Our Full <span className="gradient-text">Menu</span></h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Our Full <span className="gradient-text">Menu</span></h2>
             <div className="w-24 h-1 bg-gradient-to-r from-orange-500 to-red-500 mx-auto"></div>
-            <p className="text-muted mt-4">Browse our delicious selection of foods</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-4">Browse our delicious selection of foods</p>
           </div>
           
-          {/* Search Bar - Visible in Light Mode */}
+          {/* Search Bar */}
           <div className="max-w-md mx-auto mb-8">
             <div className="relative">
               <i className="fas fa-search absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -237,7 +238,7 @@ const Home = () => {
           {filteredFoods.length === 0 ? (
             <div className="text-center py-12">
               <i className="fas fa-utensils text-5xl mb-4 opacity-30"></i>
-              <p className="text-muted">No foods found in this category</p>
+              <p className="text-gray-500 dark:text-gray-400">No foods found in this category</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -251,20 +252,20 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Contact Section with Map and Info Side by Side */}
+      {/* Contact Section - Modern & Compact */}
       <section ref={contactRef} className={`py-20 ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <div className="text-5xl mb-4 animate-float">📞</div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 heading-2">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Get In <span className="gradient-text">Touch</span>
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-orange-500 to-red-500 mx-auto"></div>
-            <p className="text-muted mt-4">We'd love to hear from you!</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-4">We'd love to hear from you!</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Contact Information and Form */}
+            {/* Contact Information & Form */}
             <div className="card-premium overflow-hidden">
               <div className="bg-gradient-to-br from-orange-500 to-red-500 p-6 text-white">
                 <h3 className="text-2xl font-semibold mb-4">Contact Information</h3>
@@ -383,14 +384,14 @@ const Home = () => {
               </div>
             </div>
             
-            {/* Google Map */}
-            <div className="card-premium overflow-hidden h-full">
-              <div className="h-full min-h-[500px]">
+            {/* Google Map - Compact */}
+            <div className="card-premium overflow-hidden">
+              <div className="h-96">
                 <iframe 
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.442219259055!2d38.757028!3d9.030000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b85ce4d5c2a6f%3A0x5c8b7b8c5d6e8f9!2sAddis%20Ababa%2C%20Ethiopia!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s" 
                   width="100%" 
                   height="100%" 
-                  style={{ border: 0, minHeight: '500px' }} 
+                  style={{ border: 0, minHeight: '384px' }} 
                   allowFullScreen 
                   loading="lazy" 
                   title="Restaurant Location"
