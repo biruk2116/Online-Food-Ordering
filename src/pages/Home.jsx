@@ -13,6 +13,8 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
+  const [animatedFields, setAnimatedFields] = useState({});
   
   const heroRef = useRef(null);
   const menuRef = useRef(null);
@@ -31,6 +33,25 @@ const Home = () => {
     if (menuRef.current) menuRef.current.id = 'menu-section';
     if (aboutRef.current) aboutRef.current.id = 'about-section';
     if (contactRef.current) contactRef.current.id = 'contact-section';
+    
+    // Animate sections on scroll
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('section-visible');
+        }
+      });
+    }, observerOptions);
+    
+    const sections = document.querySelectorAll('.animate-on-scroll');
+    sections.forEach(section => observer.observe(section));
+    
+    return () => observer.disconnect();
   }, []);
 
   const handleContactSubmit = (e) => {
@@ -38,6 +59,19 @@ const Home = () => {
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 3000);
     setFormData({ name: '', email: '', message: '' });
+    setAnimatedFields({});
+  };
+
+  const handleFieldFocus = (field) => {
+    setFocusedField(field);
+    setAnimatedFields(prev => ({ ...prev, [field]: true }));
+  };
+
+  const handleFieldBlur = (field, value) => {
+    setFocusedField(null);
+    if (!value) {
+      setAnimatedFields(prev => ({ ...prev, [field]: false }));
+    }
   };
 
   return (
@@ -91,7 +125,7 @@ const Home = () => {
       </section>
 
       {/* Why Choose Us Section */}
-      <section className={`py-16 ${isDark ? 'bg-secondary' : 'bg-secondary'}`}>
+      <section className={`py-16 ${isDark ? 'bg-secondary' : 'bg-secondary'} animate-on-scroll`}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold mb-2">Why Choose <span className="gradient-text">Us</span>?</h2>
@@ -105,7 +139,7 @@ const Home = () => {
               { icon: '🎁', title: 'Best Offers', desc: 'Daily discounts & deals' }
             ].map((feature, idx) => (
               <div key={feature.title} className="card p-5 rounded-xl text-center transition-all duration-300 hover:-translate-y-1 animate-fadeInUp" style={{ animationDelay: `${idx * 0.1}s` }}>
-                <div className="text-4xl mb-3">{feature.icon}</div>
+                <div className="text-4xl mb-3 animate-float">{feature.icon}</div>
                 <h3 className="text-base font-semibold mb-1">{feature.title}</h3>
                 <p className="text-xs text-secondary">{feature.desc}</p>
               </div>
@@ -115,7 +149,7 @@ const Home = () => {
       </section>
 
       {/* About Us Section */}
-      <section ref={aboutRef} className={`py-16 ${isDark ? 'bg-primary' : 'bg-primary'}`}>
+      <section ref={aboutRef} className={`py-16 ${isDark ? 'bg-primary' : 'bg-primary'} animate-on-scroll`}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">About <span className="gradient-text">Us</span></h2>
@@ -140,7 +174,7 @@ const Home = () => {
                   { number: '30min', label: 'Delivery', icon: '⏱️' },
                   { number: '24/7', label: 'Support', icon: '💬' }
                 ].map(stat => (
-                  <div key={stat.label} className="card p-3 text-center">
+                  <div key={stat.label} className="card p-3 text-center transition-all duration-300 hover:scale-105">
                     <div className="text-2xl mb-1">{stat.icon}</div>
                     <div className="text-lg font-bold text-orange-500">{stat.number}</div>
                     <div className="text-xs text-secondary">{stat.label}</div>
@@ -160,7 +194,7 @@ const Home = () => {
       </section>
 
       {/* Featured Dishes Section */}
-      <section className={`py-16 ${isDark ? 'bg-secondary' : 'bg-secondary'}`}>
+      <section className={`py-16 ${isDark ? 'bg-secondary' : 'bg-secondary'} animate-on-scroll`}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold mb-2">Featured <span className="gradient-text">Dishes</span></h2>
@@ -185,7 +219,7 @@ const Home = () => {
       </section>
 
       {/* Full Menu Section */}
-      <section ref={menuRef} className={`py-16 ${isDark ? 'bg-primary' : 'bg-primary'}`}>
+      <section ref={menuRef} className={`py-16 ${isDark ? 'bg-primary' : 'bg-primary'} animate-on-scroll`}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold mb-2">Our Full <span className="gradient-text">Menu</span></h2>
@@ -193,7 +227,6 @@ const Home = () => {
             <p className="text-sm text-secondary mt-3">Browse our delicious selection of foods</p>
           </div>
           
-          {/* Search Bar */}
           <div className="max-w-md mx-auto mb-8">
             <div className="relative">
               <i className="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary text-sm"></i>
@@ -230,137 +263,201 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Contact Section - Modern Side-by-Side Layout */}
-      <section ref={contactRef} className={`py-16 ${isDark ? 'bg-secondary' : 'bg-secondary'}`}>
+      {/* Contact Section - Fully Animated */}
+      <section ref={contactRef} className={`py-20 ${isDark ? 'bg-secondary' : 'bg-secondary'} animate-on-scroll`}>
         <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <div className="text-4xl mb-3 animate-float">📞</div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">Get In <span className="gradient-text">Touch</span></h2>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 mx-auto"></div>
-            <p className="text-sm text-secondary mt-3">We'd love to hear from you!</p>
+          {/* Section Header Animation */}
+          <div className="text-center mb-12 animate-fadeInUp">
+            <div className="text-5xl mb-4 animate-float">📞</div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">
+              Get In <span className="gradient-text">Touch</span>
+            </h2>
+            <div className="w-20 h-1 bg-gradient-to-r from-orange-500 to-red-500 mx-auto animate-scaleWidth"></div>
+            <p className="text-sm text-secondary mt-4 max-w-md mx-auto">
+              We'd love to hear from you! Fill out the form below and we'll get back to you within 24 hours.
+            </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-            {/* Contact Form - Left Side */}
-            <div className="card p-6 rounded-xl animate-slideInLeft">
-              <h3 className="text-lg font-semibold mb-4">Send us a Message</h3>
-              <form onSubmit={handleContactSubmit} className="space-y-4">
-                <div>
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* Contact Form - Left Side with Floating Labels */}
+            <div className="card p-8 rounded-2xl animate-slideInLeft transition-all duration-700 hover:shadow-2xl">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                  <i className="fas fa-pen text-white text-sm"></i>
+                </div>
+                <h3 className="text-xl font-semibold">Send us a Message</h3>
+              </div>
+              
+              <form onSubmit={handleContactSubmit} className="space-y-6">
+                {/* Name Field with Floating Label */}
+                <div className="relative group">
                   <input
                     type="text"
-                    placeholder="Your Name"
+                    id="name"
                     value={formData.name}
                     onChange={e => setFormData({...formData, name: e.target.value})}
-                    className="form-input"
+                    onFocus={() => handleFieldFocus('name')}
+                    onBlur={(e) => handleFieldBlur('name', e.target.value)}
+                    className="w-full px-4 py-3 pt-5 border-2 rounded-xl focus:outline-none transition-all duration-300 peer form-input"
+                    placeholder=" "
                     required
                   />
+                  <label 
+                    htmlFor="name" 
+                    className={`absolute left-4 transition-all duration-300 pointer-events-none ${
+                      focusedField === 'name' || formData.name
+                        ? 'text-xs top-2 text-orange-500'
+                        : 'text-base top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-orange-400'
+                    }`}
+                  >
+                    <i className="fas fa-user mr-2 text-xs"></i>
+                    Your Name
+                  </label>
+                  <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 transition-all duration-300 group-focus-within:w-full"></div>
                 </div>
-                <div>
+                
+                {/* Email Field with Floating Label */}
+                <div className="relative group">
                   <input
                     type="email"
-                    placeholder="Email Address"
+                    id="email"
                     value={formData.email}
                     onChange={e => setFormData({...formData, email: e.target.value})}
-                    className="form-input"
+                    onFocus={() => handleFieldFocus('email')}
+                    onBlur={(e) => handleFieldBlur('email', e.target.value)}
+                    className="w-full px-4 py-3 pt-5 border-2 rounded-xl focus:outline-none transition-all duration-300 peer form-input"
+                    placeholder=" "
                     required
                   />
+                  <label 
+                    htmlFor="email" 
+                    className={`absolute left-4 transition-all duration-300 pointer-events-none ${
+                      focusedField === 'email' || formData.email
+                        ? 'text-xs top-2 text-orange-500'
+                        : 'text-base top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-orange-400'
+                    }`}
+                  >
+                    <i className="fas fa-envelope mr-2 text-xs"></i>
+                    Email Address
+                  </label>
+                  <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 transition-all duration-300 group-focus-within:w-full"></div>
                 </div>
-                <div>
+                
+                {/* Message Field with Floating Label */}
+                <div className="relative group">
                   <textarea
+                    id="message"
                     rows="4"
-                    placeholder="Your Message"
                     value={formData.message}
                     onChange={e => setFormData({...formData, message: e.target.value})}
-                    className="form-input"
+                    onFocus={() => handleFieldFocus('message')}
+                    onBlur={(e) => handleFieldBlur('message', e.target.value)}
+                    className="w-full px-4 py-3 pt-5 border-2 rounded-xl focus:outline-none transition-all duration-300 peer form-input resize-none"
+                    placeholder=" "
                     required
                   ></textarea>
+                  <label 
+                    htmlFor="message" 
+                    className={`absolute left-4 transition-all duration-300 pointer-events-none ${
+                      focusedField === 'message' || formData.message
+                        ? 'text-xs top-2 text-orange-500'
+                        : 'text-base top-5 text-gray-400 group-hover:text-orange-400'
+                    }`}
+                  >
+                    <i className="fas fa-comment mr-2 text-xs"></i>
+                    Your Message
+                  </label>
+                  <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 transition-all duration-300 group-focus-within:w-full"></div>
                 </div>
-                <button type="submit" className="w-full btn-primary">
-                  <i className="fas fa-paper-plane mr-2"></i>
-                  Send Message
+                
+                <button 
+                  type="submit" 
+                  className="w-full btn-primary py-3 text-base font-semibold group overflow-hidden relative"
+                >
+                  <span className="relative z-10 inline-flex items-center gap-2">
+                    <i className="fas fa-paper-plane"></i>
+                    Send Message
+                    <i className="fas fa-arrow-right transition-transform duration-300 group-hover:translate-x-1"></i>
+                  </span>
+                  <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
                 </button>
+                
                 {submitted && (
-                  <div className="text-green-500 text-center text-sm animate-fadeInUp">
-                    <i className="fas fa-check-circle mr-1"></i> Message sent successfully!
+                  <div className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 p-3 rounded-xl text-sm text-center animate-fadeInUp flex items-center justify-center gap-2">
+                    <i className="fas fa-check-circle"></i>
+                    Message sent successfully! We'll get back to you soon.
                   </div>
                 )}
               </form>
             </div>
             
-            {/* Contact Info + Map - Right Side */}
-            <div className="space-y-6 animate-slideInRight">
-              {/* Contact Info */}
-              <div className="card p-6 rounded-xl">
-                <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3 group">
-                    <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <i className="fas fa-map-marker-alt text-orange-500 text-sm"></i>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Address</p>
-                      <p className="text-xs text-secondary">Bole Road, Addis Ababa, Ethiopia</p>
-                    </div>
+            {/* Contact Info + Map - Right Side with Animations */}
+            <div className="space-y-6">
+              {/* Contact Info Card */}
+              <div className="card p-8 rounded-2xl animate-slideInRight transition-all duration-700 delay-200 hover:shadow-2xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                    <i className="fas fa-address-card text-white text-sm"></i>
                   </div>
-                  <div className="flex items-start gap-3 group">
-                    <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <i className="fas fa-phone text-orange-500 text-sm"></i>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Phone</p>
-                      <p className="text-xs text-secondary">+251 911 123 456</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 group">
-                    <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <i className="fas fa-envelope text-orange-500 text-sm"></i>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Email</p>
-                      <p className="text-xs text-secondary">support@foodiedash.com</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 group">
-                    <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <i className="fas fa-clock text-orange-500 text-sm"></i>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Support Hours</p>
-                      <p className="text-xs text-secondary">24/7 Customer Support</p>
-                    </div>
-                  </div>
+                  <h3 className="text-xl font-semibold">Contact Information</h3>
                 </div>
-                <div className="mt-5 pt-4 border-t border-custom">
-                  <h4 className="text-sm font-semibold mb-3">Follow Us</h4>
+                
+                <div className="space-y-4">
+                  {[
+                    { icon: 'fa-map-marker-alt', title: 'Address', detail: 'Bole Road, Addis Ababa, Ethiopia', color: 'text-red-500' },
+                    { icon: 'fa-phone', title: 'Phone', detail: '+251 911 123 456', color: 'text-green-500' },
+                    { icon: 'fa-envelope', title: 'Email', detail: 'support@foodiedash.com', color: 'text-blue-500' },
+                    { icon: 'fa-clock', title: 'Support Hours', detail: '24/7 Customer Support', color: 'text-purple-500' }
+                  ].map((item, idx) => (
+                    <div key={item.title} className="flex items-start gap-4 group cursor-pointer transform transition-all duration-300 hover:translate-x-2">
+                      <div className={`w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 group-hover:${item.color}`}>
+                        <i className={`fas ${item.icon} text-orange-500 group-hover:text-white transition-colors duration-300`}></i>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold mb-1">{item.title}</p>
+                        <p className="text-xs text-secondary">{item.detail}</p>
+                      </div>
+                      <i className="fas fa-chevron-right text-gray-300 opacity-0 group-hover:opacity-100 transition-all duration-300"></i>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="mt-6 pt-6 border-t border-custom">
+                  <h4 className="text-sm font-semibold mb-4">Follow Us</h4>
                   <div className="flex gap-3">
-                    <a href="#" className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all duration-300 hover:scale-110">
-                      <i className="fab fa-facebook-f text-sm"></i>
-                    </a>
-                    <a href="#" className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all duration-300 hover:scale-110">
-                      <i className="fab fa-instagram text-sm"></i>
-                    </a>
-                    <a href="#" className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all duration-300 hover:scale-110">
-                      <i className="fab fa-twitter text-sm"></i>
-                    </a>
-                    <a href="#" className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all duration-300 hover:scale-110">
-                      <i className="fab fa-telegram text-sm"></i>
-                    </a>
+                    {[
+                      { icon: 'fab fa-facebook-f', color: 'hover:bg-blue-600' },
+                      { icon: 'fab fa-instagram', color: 'hover:bg-pink-600' },
+                      { icon: 'fab fa-twitter', color: 'hover:bg-sky-500' },
+                      { icon: 'fab fa-telegram', color: 'hover:bg-blue-500' }
+                    ].map((social, idx) => (
+                      <a 
+                        key={idx}
+                        href="#" 
+                        className={`w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center transition-all duration-300 ${social.color} hover:scale-110 hover:text-white group`}
+                      >
+                        <i className={`${social.icon} text-gray-600 dark:text-gray-300 group-hover:text-white transition-colors duration-300`}></i>
+                      </a>
+                    ))}
                   </div>
                 </div>
               </div>
               
-              {/* Map - Clean & Responsive */}
-              <div className="card p-2 rounded-xl overflow-hidden">
-                <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.442219259055!2d38.757028!3d9.030000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b85ce4d5c2a6f%3A0x5c8b7b8c5d6e8f9!2sAddis%20Ababa%2C%20Ethiopia!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s" 
-                  width="100%" 
-                  height="200" 
-                  style={{ border: 0 }} 
-                  allowFullScreen 
-                  loading="lazy" 
-                  title="Restaurant Location"
-                  className="rounded-lg"
-                ></iframe>
+              {/* Map Card with Animation */}
+              <div className="card p-2 rounded-2xl overflow-hidden animate-slideInRight transition-all duration-700 delay-300 hover:shadow-2xl group">
+                <div className="relative overflow-hidden rounded-xl">
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.442219259055!2d38.757028!3d9.030000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b85ce4d5c2a6f%3A0x5c8b7b8c5d6e8f9!2sAddis%20Ababa%2C%20Ethiopia!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s" 
+                    width="100%" 
+                    height="220" 
+                    style={{ border: 0 }} 
+                    allowFullScreen 
+                    loading="lazy" 
+                    title="Restaurant Location"
+                    className="transition-transform duration-500 group-hover:scale-105"
+                  ></iframe>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
               </div>
             </div>
           </div>
