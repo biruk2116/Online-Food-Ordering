@@ -22,15 +22,11 @@ const FoodCard = ({ food }) => {
   };
 
   return (
-    <div className={`group rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 ${
-      isDark 
-        ? 'bg-[#1e1e2e] hover:bg-[#252540] shadow-lg' 
-        : 'bg-white hover:shadow-md shadow-sm'
-    }`}>
+    <div className={`card group rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
       <Link to={`/food/${food.id}`}>
         <div className="relative overflow-hidden h-40">
           <img src={food.image} alt={food.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-          <div className="absolute top-2 right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-lg">
+          <div className="absolute top-2 right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
             ${food.price}
           </div>
         </div>
@@ -38,48 +34,39 @@ const FoodCard = ({ food }) => {
       
       <div className="p-3">
         <Link to={`/food/${food.id}`}>
-          <h3 className={`text-sm font-semibold mb-1 hover:text-orange-500 transition-colors duration-300 ${
-            isDark ? 'text-white' : 'text-gray-800'
-          }`}>
+          <h3 className={`text-sm font-semibold mb-1 hover:text-orange-500 transition-colors ${isDark ? 'text-white' : 'text-gray-800'}`}>
             {food.name}
           </h3>
         </Link>
-        <p className={`text-xs mb-2 line-clamp-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+        <p className={`text-xs mb-2 line-clamp-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
           {food.shortDescription}
         </p>
         
-        {/* Nutrition Dropdown */}
         <button
           onClick={() => setShowNutrition(!showNutrition)}
-          className={`w-full flex items-center justify-between text-xs mb-2 px-2 py-1 rounded transition-all duration-300 ${
-            isDark 
-              ? 'text-orange-400 hover:bg-gray-700' 
-              : 'text-orange-500 hover:bg-orange-50'
-          }`}
+          className={`w-full flex items-center justify-between text-xs mb-2 px-2 py-1 rounded transition-all ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
         >
           <span><i className="fas fa-chart-line mr-1"></i>Nutrition</span>
-          <i className={`fas fa-chevron-${showNutrition ? 'up' : 'down'} text-xs transition-transform duration-300`}></i>
+          <i className={`fas fa-chevron-${showNutrition ? 'up' : 'down'} text-xs transition-transform duration-200`}></i>
         </button>
         
         {showNutrition && (
-          <div className={`rounded p-2 mb-2 space-y-1 text-xs animate-fadeInUp ${
-            isDark ? 'bg-gray-800' : 'bg-orange-50'
-          }`}>
+          <div className={`rounded p-2 mb-2 space-y-1 text-xs animate-fadeInUp ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
             <div className="flex justify-between">
-              <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>🔥 Calories</span>
-              <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-800'}`}>{food.nutrition.calories} kcal</span>
+              <span>🔥 Calories</span>
+              <span className="font-semibold">{food.nutrition.calories} kcal</span>
             </div>
             <div className="flex justify-between">
-              <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>🍞 Carbs</span>
-              <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-800'}`}>{food.nutrition.carbs}g</span>
+              <span>🍞 Carbs</span>
+              <span className="font-semibold">{food.nutrition.carbs}g</span>
             </div>
             <div className="flex justify-between">
-              <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>💪 Protein</span>
-              <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-800'}`}>{food.nutrition.protein}g</span>
+              <span>💪 Protein</span>
+              <span className="font-semibold">{food.nutrition.protein}g</span>
             </div>
             <div className="flex justify-between">
-              <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>🧈 Fats</span>
-              <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-800'}`}>{food.nutrition.fats}g</span>
+              <span>🧈 Fats</span>
+              <span className="font-semibold">{food.nutrition.fats}g</span>
             </div>
           </div>
         )}
@@ -88,10 +75,8 @@ const FoodCard = ({ food }) => {
           onClick={handleAddToCart}
           disabled={isAdding}
           className={`w-full py-1.5 rounded-full text-xs font-semibold transition-all duration-300 flex items-center justify-center gap-1 ${
-            isAdding 
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-gradient-to-r from-orange-500 to-red-500 hover:scale-105'
-          } text-white shadow-md`}
+            isAdding ? 'bg-gray-400 cursor-not-allowed' : 'btn-primary'
+          }`}
         >
           {isAdding ? (
             <><i className="fas fa-check text-xs"></i> Added!</>
