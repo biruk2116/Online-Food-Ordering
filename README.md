@@ -46,6 +46,9 @@ FoodieDash is a modern, fully responsive online food ordering platform built wit
 - **Prettier** - Code formatting
 
 ## 📁 Project Structure
+## 📁 Project Structure
+
+```
 online-food-ordering/
 │
 ├── public/
@@ -109,6 +112,7 @@ online-food-ordering/
 ├── tailwind.config.js
 ├── vite.config.js
 └── README.md
+```
 
 ## 🚀 Installation & Setup
 
