@@ -25,15 +25,7 @@ FoodieDash is a modern, fully responsive online food ordering platform built wit
 - 🎯 **Smooth Scrolling** - Animated navigation between sections
 - 🎨 **Floating Labels** - Modern form inputs with animated labels
 
-## 🚀 Live Demo
 
-[View Live Demo](#) *(Add your deployment link here)*
-
-## 📸 Screenshots
-
-| Home Page | Menu Page | Admin Dashboard |
-|-----------|-----------|-----------------|
-| ![Home](screenshots/home.png) | ![Menu](screenshots/menu.png) | ![Admin](screenshots/admin.png) |
 
 ## 🛠️ Tech Stack
 
@@ -56,50 +48,67 @@ FoodieDash is a modern, fully responsive online food ordering platform built wit
 ## 📁 Project Structure
 online-food-ordering/
 ├── public/
-│ └── index.html
+│   └── vite.svg
+│
 ├── src/
-│ ├── assets/
-│ │ └── images/ # Image assets
-│ ├── components/
-│ │ ├── AdminFoodForm.jsx
-│ │ ├── AdminFoodTable.jsx
-│ │ ├── CartItem.jsx
-│ │ ├── CartSidebar.jsx
-│ │ ├── CategoryFilter.jsx
-│ │ ├── FoodCard.jsx
-│ │ ├── Footer.jsx
-│ │ ├── Navbar.jsx
-│ │ ├── QuickSearch.jsx
-│ │ ├── RatingStars.jsx
-│ │ ├── RecommendationSection.jsx
-│ │ └── SearchBar.jsx
-│ ├── context/
-│ │ ├── AuthContext.jsx
-│ │ ├── CartContext.jsx
-│ │ ├── FoodContext.jsx
-│ │ ├── OrderContext.jsx
-│ │ └── SettingsContext.jsx
-│ ├── pages/
-│ │ ├── Home.jsx
-│ │ ├── Menu.jsx
-│ │ ├── Cart.jsx
-│ │ ├── Checkout.jsx
-│ │ ├── Login.jsx
-│ │ ├── Signup.jsx
-│ │ ├── OrderHistory.jsx
-│ │ ├── Account.jsx
-│ │ ├── FoodDetails.jsx
-│ │ └── AdminDashboard.jsx
-│ ├── utils/
-│ │ └── localStorage.js
-│ ├── App.jsx
-│ ├── main.jsx
-│ └── index.css
+│   ├── assets/
+│   │   └── images/
+│   │       ├── Burger.jpg
+│   │       ├── Coffee.jpg
+│   │       ├── Dorowot.jpg
+│   │       ├── Kitfo.jpg
+│   │       ├── Shiro.jpg
+│   │       └── Tej.jpg
+│   │
+│   ├── components/
+│   │   ├── AdminFoodForm.jsx
+│   │   ├── AdminFoodTable.jsx
+│   │   ├── CartItem.jsx
+│   │   ├── CartSidebar.jsx
+│   │   ├── CategoryFilter.jsx
+│   │   ├── FoodCard.jsx
+│   │   ├── Footer.jsx
+│   │   ├── Navbar.jsx
+│   │   ├── QuickSearch.jsx
+│   │   ├── RatingStars.jsx
+│   │   ├── RecommendationSection.jsx
+│   │   └── SearchBar.jsx
+│   │
+│   ├── context/
+│   │   ├── AuthContext.jsx
+│   │   ├── CartContext.jsx
+│   │   ├── FoodContext.jsx
+│   │   ├── OrderContext.jsx
+│   │   └── SettingsContext.jsx
+│   │
+│   ├── pages/
+│   │   ├── Account.jsx
+│   │   ├── AdminDashboard.jsx
+│   │   ├── Cart.jsx
+│   │   ├── Checkout.jsx
+│   │   ├── FoodDetails.jsx
+│   │   ├── Home.jsx
+│   │   ├── Login.jsx
+│   │   ├── Menu.jsx
+│   │   ├── OrderHistory.jsx
+│   │   └── Signup.jsx
+│   │
+│   ├── utils/
+│   │   └── localStorage.js
+│   │
+│   ├── App.jsx
+│   ├── App.css
+│   ├── main.jsx
+│   └── index.css
+│
 ├── .gitignore
+├── index.html
 ├── package.json
-├── README.md
+├── package-lock.json
+├── postcss.config.js
 ├── tailwind.config.js
-└── vite.config.js
+├── vite.config.js
+└── README.md
 
 ## 🚀 Installation & Setup
 
@@ -124,3 +133,29 @@ npm install react-router-dom
 yarn add react-router-dom
 
 npx tailwindcss init -p
+
+Update tailwind.config.js
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+npm run dev
+# or
+yarn dev
+
+npm run build
+# or
+yarn build
+
+npm run preview
+# or
+yarn preview
