@@ -49,7 +49,6 @@ FoodieDash is a modern, fully responsive online food ordering platform built wit
 online-food-ordering/
 ├── public/
 │   └── vite.svg
-│
 ├── src/
 │   ├── assets/
 │   │   └── images/
@@ -59,7 +58,6 @@ online-food-ordering/
 │   │       ├── Kitfo.jpg
 │   │       ├── Shiro.jpg
 │   │       └── Tej.jpg
-│   │
 │   ├── components/
 │   │   ├── AdminFoodForm.jsx
 │   │   ├── AdminFoodTable.jsx
@@ -73,14 +71,12 @@ online-food-ordering/
 │   │   ├── RatingStars.jsx
 │   │   ├── RecommendationSection.jsx
 │   │   └── SearchBar.jsx
-│   │
 │   ├── context/
 │   │   ├── AuthContext.jsx
 │   │   ├── CartContext.jsx
 │   │   ├── FoodContext.jsx
 │   │   ├── OrderContext.jsx
 │   │   └── SettingsContext.jsx
-│   │
 │   ├── pages/
 │   │   ├── Account.jsx
 │   │   ├── AdminDashboard.jsx
@@ -92,15 +88,12 @@ online-food-ordering/
 │   │   ├── Menu.jsx
 │   │   ├── OrderHistory.jsx
 │   │   └── Signup.jsx
-│   │
 │   ├── utils/
 │   │   └── localStorage.js
-│   │
 │   ├── App.jsx
 │   ├── App.css
 │   ├── main.jsx
 │   └── index.css
-│
 ├── .gitignore
 ├── index.html
 ├── package.json
