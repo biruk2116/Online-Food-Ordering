@@ -46,62 +46,105 @@ FoodieDash is a modern, fully responsive online food ordering platform built wit
 - **Prettier** - Code formatting
 
 ## 📁 Project Structure
-online-food-ordering/
-├── public/
-│   └── vite.svg
-├── src/
-│   ├── assets/
-│   │   └── images/
-│   │       ├── Burger.jpg
-│   │       ├── Coffee.jpg
-│   │       ├── Dorowot.jpg
-│   │       ├── Kitfo.jpg
-│   │       ├── Shiro.jpg
-│   │       └── Tej.jpg
-│   ├── components/
-│   │   ├── AdminFoodForm.jsx
-│   │   ├── AdminFoodTable.jsx
-│   │   ├── CartItem.jsx
-│   │   ├── CartSidebar.jsx
-│   │   ├── CategoryFilter.jsx
-│   │   ├── FoodCard.jsx
-│   │   ├── Footer.jsx
-│   │   ├── Navbar.jsx
-│   │   ├── QuickSearch.jsx
-│   │   ├── RatingStars.jsx
-│   │   ├── RecommendationSection.jsx
-│   │   └── SearchBar.jsx
-│   ├── context/
-│   │   ├── AuthContext.jsx
-│   │   ├── CartContext.jsx
-│   │   ├── FoodContext.jsx
-│   │   ├── OrderContext.jsx
-│   │   └── SettingsContext.jsx
-│   ├── pages/
-│   │   ├── Account.jsx
-│   │   ├── AdminDashboard.jsx
-│   │   ├── Cart.jsx
-│   │   ├── Checkout.jsx
-│   │   ├── FoodDetails.jsx
-│   │   ├── Home.jsx
-│   │   ├── Login.jsx
-│   │   ├── Menu.jsx
-│   │   ├── OrderHistory.jsx
-│   │   └── Signup.jsx
-│   ├── utils/
-│   │   └── localStorage.js
-│   ├── App.jsx
-│   ├── App.css
-│   ├── main.jsx
-│   └── index.css
-├── .gitignore
-├── index.html
-├── package.json
-├── package-lock.json
-├── postcss.config.js
-├── tailwind.config.js
-├── vite.config.js
-└── README.md
+📁 online-food-ordering/
+│
+├── 📁 public/
+│   └── 📄 vite.svg
+│
+├── 📁 src/
+│   │
+│   ├── 📁 assets/
+│   │   ├── 📁 images/
+│   │   │   ├── 📄 Burger.jpg
+│   │   │   ├── 📄 Coffee.jpg
+│   │   │   ├── 📄 Dorowot.jpg
+│   │   │   ├── 📄 Kitfo.jpg
+│   │   │   ├── 📄 Shiro.jpg
+│   │   │   └── 📄 Tej.jpg
+│   │   │
+│   │   └── 📁 icons/
+│   │       └── 📄 logo.svg
+│   │
+│   ├── 📁 components/
+│   │   ├── 📁 common/
+│   │   │   ├── 📄 Navbar.jsx
+│   │   │   ├── 📄 Footer.jsx
+│   │   │   ├── 📄 SearchBar.jsx
+│   │   │   └── 📄 RatingStars.jsx
+│   │   │
+│   │   ├── 📁 food/
+│   │   │   ├── 📄 FoodCard.jsx
+│   │   │   ├── 📄 FoodDetails.jsx
+│   │   │   └── 📄 RecommendationSection.jsx
+│   │   │
+│   │   ├── 📁 cart/
+│   │   │   ├── 📄 CartItem.jsx
+│   │   │   └── 📄 CartSidebar.jsx
+│   │   │
+│   │   ├── 📁 admin/
+│   │   │   ├── 📄 AdminFoodForm.jsx
+│   │   │   └── 📄 AdminFoodTable.jsx
+│   │   │
+│   │   └── 📁 ui/
+│   │       ├── 📄 CategoryFilter.jsx
+│   │       └── 📄 QuickSearch.jsx
+│   │
+│   ├── 📁 context/
+│   │   ├── 📄 AuthContext.jsx
+│   │   ├── 📄 CartContext.jsx
+│   │   ├── 📄 FoodContext.jsx
+│   │   ├── 📄 OrderContext.jsx
+│   │   └── 📄 SettingsContext.jsx
+│   │
+│   ├── 📁 pages/
+│   │   ├── 📁 auth/
+│   │   │   ├── 📄 Login.jsx
+│   │   │   └── 📄 Signup.jsx
+│   │   │
+│   │   ├── 📁 user/
+│   │   │   ├── 📄 Home.jsx
+│   │   │   ├── 📄 Menu.jsx
+│   │   │   ├── 📄 Cart.jsx
+│   │   │   ├── 📄 Checkout.jsx
+│   │   │   ├── 📄 OrderHistory.jsx
+│   │   │   └── 📄 Account.jsx
+│   │   │
+│   │   └── 📁 admin/
+│   │       └── 📄 AdminDashboard.jsx
+│   │
+│   ├── 📁 hooks/
+│   │   ├── 📄 useAuth.js
+│   │   ├── 📄 useCart.js
+│   │   └── 📄 useLocalStorage.js
+│   │
+│   ├── 📁 services/
+│   │   ├── 📄 api.js
+│   │   └── 📄 storage.js
+│   │
+│   ├── 📁 utils/
+│   │   ├── 📄 constants.js
+│   │   ├── 📄 helpers.js
+│   │   └── 📄 validators.js
+│   │
+│   ├── 📁 styles/
+│   │   ├── 📄 globals.css
+│   │   └── 📄 animations.css
+│   │
+│   ├── 📁 data/
+│   │   └── 📄 menuData.js
+│   │
+│   ├── 📄 App.jsx
+│   ├── 📄 main.jsx
+│   └── 📄 index.css
+│
+├── 📄 .gitignore
+├── 📄 index.html
+├── 📄 package.json
+├── 📄 package-lock.json
+├── 📄 postcss.config.js
+├── 📄 tailwind.config.js
+├── 📄 vite.config.js
+└── 📄 README.md
 
 ## 🚀 Installation & Setup
 
